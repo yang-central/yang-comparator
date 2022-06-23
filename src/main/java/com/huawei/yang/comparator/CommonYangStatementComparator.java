@@ -115,7 +115,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
                 }
                 CompatibilityRule compatibilityRule = null;
                 if(null != getCompatibilityRules()){
-                    compatibilityRule = getCompatibilityRules().searchRule(statement, CompatibilityRule.RuleType.STMT,changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(statement, changeInfo);
                 }
                 if(compatibilityRule == null){
                     //ignore sequence change

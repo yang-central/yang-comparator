@@ -54,7 +54,7 @@
                             <classpathPrefix>libs/</classpathPrefix>
                         </manifest>
                         <manifestEntries>
-                            <Class-path>libs/yangkit-common-1.0-SNAPSHOT.jar libs/yangkit-common-utils-1.0-SNAPSHOT.jar  libs/yangkit-data-api-1.0-SNAPSHOT.jar libs/yangkit-model-api-1.0-SNAPSHOT.jar  libs/yangkit-model-impl-1.0-SNAPSHOT.jar  libs/yangkit-parser-1.0-SNAPSHOT.jar lib/yangkit-xpath-api-1.0-SNAPSHOT.jar  libs/yangkit-xpath-impl-1.0-SNAPSHOT.jar</Class-path>
+                            <Class-path>libs/yangkit-common-1.0-SNAPSHOT.jar libs/yangkit-common-utils-1.0-SNAPSHOT.jar  libs/yangkit-data-api-1.0-SNAPSHOT.jar libs/yangkit-model-api-1.0-SNAPSHOT.jar  libs/yangkit-model-impl-1.0-SNAPSHOT.jar  libs/yangkit-parser-1.0-SNAPSHOT.jar libs/yangkit-xpath-api-1.0-SNAPSHOT.jar  libs/yangkit-xpath-impl-1.0-SNAPSHOT.jar</Class-path>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -154,6 +154,52 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>3.1.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.albfernandez</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+            <version>2.2.100</version>
         </dependency>
     </dependencies>
 </project>

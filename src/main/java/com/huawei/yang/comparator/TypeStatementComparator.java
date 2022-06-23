@@ -50,7 +50,7 @@ public class TypeStatementComparator extends CommonYangStatementComparator<Type>
 
                 CompatibilityRule compatibilityRule = null;
                 if(getCompatibilityRules() != null){
-                    compatibilityRule = getCompatibilityRules().searchRule(YangBuiltinKeyword.TYPE.getKeyword(), CompatibilityRule.RuleType.STMT,changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(YangBuiltinKeyword.TYPE.getKeyword(), changeInfo);
                 }
                 if(compatibilityRule == null){
                     if(changeInfo == CompatibilityRule.ChangeInfo.SEQUENCE_CHANGED){

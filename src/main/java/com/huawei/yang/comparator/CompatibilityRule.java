@@ -14,17 +14,17 @@ import java.util.List;
 public class CompatibilityRule {
     private String ruleId;
     private List<String> statements;//[module_name:]keyword, for example, container/huawei-extension:filter
-    private List<RuleType> ruleTypes;//STMT OR TREE
+    //private List<RuleType> ruleTypes;//STMT OR TREE
     private ChangeInfo condition;
     private List<ChangeInfo> exceptConditions;
     private Compatibility compatibility;
     private String description;
 
-    public CompatibilityRule(String ruleId, List<String> statements, List<RuleType> ruleTypes, ChangeInfo condition,
+    public CompatibilityRule(String ruleId, List<String> statements, ChangeInfo condition,
         Compatibility compatibility) {
         this.ruleId = ruleId;
         this.statements = statements;
-        this.ruleTypes = ruleTypes;
+        //this.ruleTypes = ruleTypes;
         this.condition = condition;
         this.compatibility = compatibility;
     }
@@ -47,9 +47,7 @@ public class CompatibilityRule {
         return statements;
     }
 
-    public List<RuleType> getRuleTypes() {
-        return ruleTypes;
-    }
+
 
     public ChangeInfo getCondition() {
         return condition;
@@ -189,7 +187,7 @@ public class CompatibilityRule {
         }
         Compatibility compatibility = Compatibility.forName(element.elementText("compatible"));
         String description = element.elementText("description");
-        CompatibilityRule rule = new CompatibilityRule(ruleId,statements,types,condition,compatibility);
+        CompatibilityRule rule = new CompatibilityRule(ruleId,statements,condition,compatibility);
         rule.setExceptCondition(exceptConditions);
         rule.setDescription(description);
         return rule;

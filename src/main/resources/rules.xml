@@ -17,7 +17,6 @@
             <statement>anyxml</statement>
             <statement>anydata</statement>
         </statements>
-        <type>tree</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add an optional schema node, it's backward-compatible change.</description>
@@ -39,7 +38,6 @@
             <statement>anyxml</statement>
             <statement>anydata</statement>
         </statements>
-        <type>tree</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a schema node, it's non-backward-compatible change.</description>
@@ -61,7 +59,6 @@
             <statement>anyxml</statement>
             <statement>anydata</statement>
         </statements>
-        <type>tree</type>
         <condition>mandatory-added</condition>
         <compatible>non-backward-compatible</compatible>
         <description>add a mandatory true schema node, it's non-backward-compatible change.</description>
@@ -71,7 +68,6 @@
         <statements>
             <statement>typedef</statement>
         </statements>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a typedef, it's backward-compatible</description>
@@ -81,7 +77,6 @@
         <statements>
             <statement>typedef</statement>
         </statements>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a typedef, it's backward-compatible</description>
@@ -91,7 +86,6 @@
         <statements>
             <statement>type</statement>
         </statements>
-        <type>tree</type>
         <condition>integer-type-changed</condition>
         <compatible>backward-compatible</compatible>
         <description>type changed from one integer to other integer, it's backward-compatible</description>
@@ -101,7 +95,6 @@
         <statements>
             <statement>type</statement>
         </statements>
-        <type>tree</type>
         <condition>changed</condition>
         <except-condition>integer-type-changed</except-condition>
         <compatible>non-backward-compatible</compatible>
@@ -118,8 +111,6 @@
             <statement>mandatory</statement><!-- from true to false -->
             <statement>config</statement><!-- from false to true-->
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description> the scope is expanded, it's backward-compatible</description>
@@ -135,8 +126,6 @@
             <statement>mandatory</statement><!-- from false to true -->
             <statement>config</statement><!-- from true to false-->
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description> the scope is reduced, it's non-backward-compatible</description>
@@ -147,8 +136,6 @@
             <statement>enum</statement>
             <statement>bit</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a enum/bit, it's backward-compatible</description>
@@ -159,8 +146,6 @@
             <statement>enum</statement>
             <statement>bit</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a enum/bit, it's non-backward-compatible</description>
@@ -171,8 +156,6 @@
             <statement>enum</statement>
             <statement>bit</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description>change a enum/bit,for example, the value of this enum is changed, it's non-backward-compatible</description>
@@ -182,7 +165,6 @@
         <statements>
             <statement>default</statement>
         </statements>
-        <type>stmt</type>
         <condition>any</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change of default will be treated as non-backward-compatible change</description>
@@ -192,8 +174,6 @@
         <statements>
             <statement>pattern</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>added</condition>
         <compatible>non-backward-compatible</compatible>
         <description>add a new pattern ,it's a non-backward-compatible change</description>
@@ -203,8 +183,6 @@
         <statements>
             <statement>pattern</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>deleted</condition>
         <compatible>backward-compatible</compatible>
         <description>delete a pattern ,it's a backward-compatible change</description>
@@ -214,8 +192,6 @@
         <statements>
             <statement>pattern</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>changed</condition>
         <compatible>unknown</compatible>
         <description>pattern is changed ,it's a unknown change</description>
@@ -225,8 +201,6 @@
         <statements>
             <statement>modifier</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>any</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change of modifier will be treated as a non-backward-compatible change</description>
@@ -236,7 +210,6 @@
         <statements>
             <statement>key</statement>
         </statements>
-        <type>tree</type>
         <condition>any</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change of key will be treated as a non-backward-compatible change</description>
@@ -246,7 +219,6 @@
         <statements>
             <statement>mandatory</statement>
         </statements>
-        <type>tree</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>from mandatory false to mandatory true, it's non-backward-compatible change</description>
@@ -256,7 +228,6 @@
         <statements>
             <statement>mandatory</statement>
         </statements>
-        <type>tree</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>from mandatory true to mandatory false, it's backward-compatible change</description>
@@ -266,7 +237,6 @@
         <statements>
             <statement>unique</statement>
         </statements>
-        <type>tree</type>
         <condition>added</condition>
         <compatible>non-backward-compatible</compatible>
         <description>add a new unique, it's a non-backward-compatible change</description>
@@ -276,7 +246,6 @@
         <statements>
             <statement>unique</statement>
         </statements>
-        <type>tree</type>
         <condition>deleted</condition>
         <compatible>backward-compatible</compatible>
         <description>delete a  unique, it's a backward-compatible change</description>
@@ -286,7 +255,6 @@
         <statements>
             <statement>unique</statement>
         </statements>
-        <type>tree</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>unique attrs are added, it's a non-backward-compatible change</description>
@@ -296,7 +264,6 @@
         <statements>
             <statement>unique</statement>
         </statements>
-        <type>tree</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>unique attrs are deleted, it's a non-backward-compatible change</description>
@@ -306,7 +273,6 @@
         <statements>
             <statement>config</statement>
         </statements>
-        <type>tree</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>config from false to true, it's a backward-compatible change.</description>
@@ -316,7 +282,6 @@
         <statements>
             <statement>config</statement>
         </statements>
-        <type>tree</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>config from true to false, it's a non-backward-compatible change.</description>
@@ -326,7 +291,6 @@
         <statements>
             <statement>huawei-extension:support-filter</statement>
         </statements>
-        <type>tree</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>support-filter from false to true, it's backward-compatible change.</description>
@@ -336,7 +300,6 @@
         <statements>
             <statement>huawei-extension:support-filter</statement>
         </statements>
-        <type>tree</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>support-filter from true to false, it's non-backward-compatible change.</description>
@@ -346,8 +309,6 @@
         <statements>
             <statement>path</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>the node-set which the path points to is expanded, it's backward-compatible change.</description>
@@ -357,8 +318,6 @@
         <statements>
             <statement>path</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>the node-set which the path points to is reduced, it's non-backward-compatible change.</description>
@@ -368,7 +327,6 @@
         <statements>
             <statement>path</statement>
         </statements>
-        <type>stmt</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description>the node-set which the path points to is changed (e.g. from one data node to another data node),
@@ -379,7 +337,6 @@
         <statements>
             <statement>require-instance</statement>
         </statements>
-        <type>stmt</type>
         <condition>expand</condition>
         <compatible>backward-compatible</compatible>
         <description>require-instance from true to false, it's backward-compatible change.</description>
@@ -389,7 +346,6 @@
         <statements>
             <statement>require-instance</statement>
         </statements>
-        <type>stmt</type>
         <condition>reduce</condition>
         <compatible>non-backward-compatible</compatible>
         <description>require-instance from false to true, it's non-backward-compatible change.</description>
@@ -399,8 +355,6 @@
         <statements>
             <statement>units</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a units, it's backward-compatible change.</description>
@@ -410,8 +364,6 @@
         <statements>
             <statement>units</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete units, it's non-backward-compatible change.</description>
@@ -421,8 +373,6 @@
         <statements>
             <statement>units</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description>change units, it's non-backward-compatible change.</description>
@@ -433,8 +383,6 @@
             <statement>when</statement>
             <statement>must</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>non-backward-compatible</compatible>
         <description>add a when or must, it's non-backward-compatible change.</description>
@@ -445,8 +393,6 @@
             <statement>when</statement>
             <statement>must</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>backward-compatible</compatible>
         <description>delete a when or must, it's non-backward-compatible change.</description>
@@ -457,8 +403,6 @@
             <statement>when</statement>
             <statement>must</statement>
         </statements>
-        <type>tree</type>
-        <type>stmt</type>
         <condition>changed</condition>
         <compatible>unknown</compatible>
         <description>when or must is changed, it's unknown change.</description>
@@ -468,8 +412,6 @@
         <statements>
             <statement>if-feature</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>added</condition>
         <compatible>non-backward-compatible</compatible>
         <description>add a if-feature,it's non-backward-compatible change.</description>
@@ -479,8 +421,6 @@
         <statements>
             <statement>if-feature</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>deleted</condition>
         <compatible>backward-compatible</compatible>
         <description>delete a if-feature,it's backward-compatible change.</description>
@@ -490,8 +430,6 @@
         <statements>
             <statement>if-feature</statement>
         </statements>
-        <type>stmt</type>
-        <type>tree</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description> a if-feature changed,it's non-backward-compatible change.</description>
@@ -501,7 +439,6 @@
         <statements>
             <statement>belongs-to</statement>
         </statements>
-        <type>stmt</type>
         <condition>any</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change for belongs-to is non-backward-compatible.</description>
@@ -511,7 +448,6 @@
         <statements>
             <statement>prefix</statement>
         </statements>
-        <type>stmt</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change for prefix is non-backward-compatible.</description>
@@ -530,7 +466,6 @@
         <statements>
             <statement>namespace</statement>
         </statements>
-        <type>stmt</type>
         <condition>changed</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any change for namespace is non-backward-compatible.</description>
@@ -540,7 +475,6 @@
         <statements>
             <statement>identity</statement>
         </statements>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a new identity, it's a backward-compatible change.</description>
@@ -550,7 +484,6 @@
         <statements>
             <statement>identity</statement>
         </statements>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a new identity, it's a non-backward-compatible change.</description>
@@ -560,7 +493,6 @@
         <statements>
             <statement>base</statement>
         </statements>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a new base, it's a backward-compatible change.</description>
@@ -570,7 +502,6 @@
         <statements>
             <statement>base</statement>
         </statements>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a base, it's a non-backward-compatible change.</description>
@@ -580,7 +511,6 @@
         <statements>
             <statement>extension</statement>
         </statements>
-        <type>stmt</type>
         <condition>added</condition>
         <compatible>backward-compatible</compatible>
         <description>add a new extension, it's a backward-compatible change.</description>
@@ -590,7 +520,6 @@
         <statements>
             <statement>extension</statement>
         </statements>
-        <type>stmt</type>
         <condition>deleted</condition>
         <compatible>non-backward-compatible</compatible>
         <description>delete a new extension, it's a non-backward-compatible change.</description>
@@ -600,7 +529,6 @@
         <statements>
             <statement>argument</statement>
         </statements>
-        <type>stmt</type>
         <condition>any</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any chang for argument is a non-backward-compatible change.</description>
@@ -610,7 +538,6 @@
         <statements>
             <statement>yin-element</statement>
         </statements>
-        <type>stmt</type>
         <condition>change</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any chang for yin-element is a non-backward-compatible change.</description>
@@ -620,7 +547,6 @@
         <statements>
             <statement>revision-date</statement>
         </statements>
-        <type>stmt</type>
         <condition>change</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any chang for revision-date is a non-backward-compatible change.</description>
@@ -630,7 +556,6 @@
         <statements>
             <statement>ordered-by</statement>
         </statements>
-        <type>stmt</type>
         <condition>change</condition>
         <compatible>non-backward-compatible</compatible>
         <description>any chang for ordered-by is a non-backward-compatible change.</description>

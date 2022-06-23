@@ -119,8 +119,27 @@ arguments:
 
 ### Example:
 download 8.20.10 and 8.21.0 versions yang files of network-router from https://github.com/Huawei/yang
+ and copy to example/yang
 
-java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y 
+cd example and execute the commands:
+
+get statement difference:
+
+java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_stmt.xml -stmt
+
+get schema node path difference:
+java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_tree.xml -tree
+
+get compatibility result:
+
+java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility.xml -compatible-check
+
+get compatibility with rule result:
+
+java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility_rule.xml -compatible-check --rule rules.xml
+
+
+
 
 
     

@@ -77,7 +77,7 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
 
                 CompatibilityRule compatibilityRule = null;
                 if(getCompatibilityRules() != null){
-                    compatibilityRule = getCompatibilityRules().searchRule(statement, CompatibilityRule.RuleType.TREE,changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(statement,changeInfo);
                 }
                 if(compatibilityRule == null){
                     if(changeInfo == CompatibilityRule.ChangeInfo.SEQUENCE_CHANGED){
