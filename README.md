@@ -4,28 +4,26 @@ yang comparator is a tool which can compare two versions of yang releases. It ca
 Yang comparator provide three main functions:compare statements, compare tree and check the compatibility between two versions.
 
 ### compare statements
-    compare the statements of the two yang release versions. It will identify the statements which are added,changed, or deleted for every yang files between the previous version and current version.
-    These differences are all textual differences , not the effective differences. 
-    For example:
+compare the statements of the two yang release versions. It will identify the statements which are added,changed, or deleted for every yang files between the previous version and current version.
+These differences are all textual differences , not the effective differences. 
+For example:
 
-    previous statements:
-
-    leaf foo {
+previous statements:
+    
+leaf foo {
       
       type string;
-
-    }
+}
     
    current statements:
 
-   leaf foo {
+leaf foo {
 
       type string;
       mandatory false;
-
-    }
+}
     
-    The difference will be "mandatory false" is added, although the previous leaf foo is 'mandatory false' by default.
+The difference will be "mandatory false" is added, although the previous leaf foo is 'mandatory false' by default.
 
 ### compare tree
   compare the schema tree of the two yang release versions. It will identify which schema node paths are added,changed or deleted, and which schema node paths are changed to be deprecated or obsolete.
@@ -128,6 +126,7 @@ get statement difference:
 java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_stmt.xml -stmt
 
 get schema node path difference:
+
 java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_tree.xml -tree
 
 get compatibility result:
