@@ -71,13 +71,14 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
         if(temp == null){
             temp = left;
         }
-        String statement = getStatement(left,right);
+        String statement = getStatement(temp);
+        String parentStatement = getStatement(temp.getParentStatement());
         if(!changeInfos.isEmpty()){
             for(CompatibilityRule.ChangeInfo changeInfo:changeInfos){
 
                 CompatibilityRule compatibilityRule = null;
                 if(getCompatibilityRules() != null){
-                    compatibilityRule = getCompatibilityRules().searchRule(statement,changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(statement,parentStatement,changeInfo);
                 }
                 if(compatibilityRule == null){
                     if(changeInfo == CompatibilityRule.ChangeInfo.SEQUENCE_CHANGED){

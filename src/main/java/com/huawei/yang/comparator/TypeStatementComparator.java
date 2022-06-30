@@ -3,6 +3,7 @@ package com.huawei.yang.comparator;
 import com.huawei.yang.base.YangBuiltinKeyword;
 import com.huawei.yang.model.api.restriction.YangInteger;
 import com.huawei.yang.model.api.stmt.Type;
+import com.huawei.yang.model.api.stmt.YangStatement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +45,15 @@ public class TypeStatementComparator extends CommonYangStatementComparator<Type>
     public List<YangCompareResult> compare(Type left, Type right) {
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<CompatibilityRule.ChangeInfo> changeInfos = getChangeInfo(left,right);
+
         if(!changeInfos.isEmpty()){
+            YangStatement effectiveStmt = left==null?right:left;
+            String statement = getStatement(effectiveStmt);
+            String parentStmt = getStatement(effectiveStmt.getParentStatement());
             for(CompatibilityRule.ChangeInfo changeInfo:changeInfos){
-
-
                 CompatibilityRule compatibilityRule = null;
                 if(getCompatibilityRules() != null){
-                    compatibilityRule = getCompatibilityRules().searchRule(YangBuiltinKeyword.TYPE.getKeyword(), changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(statement,parentStmt, changeInfo);
                 }
                 if(compatibilityRule == null){
                     if(changeInfo == CompatibilityRule.ChangeInfo.SEQUENCE_CHANGED){

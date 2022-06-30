@@ -72,10 +72,18 @@ public class CompatibilityRules {
         }
         return false;
     }
-    public CompatibilityRule searchRule(String statement,
+    public CompatibilityRule searchRule(String statement,String parentStmt,
         CompatibilityRule.ChangeInfo changeInfo){
         for(CompatibilityRule rule:compatibilityRules){
             if(rule.getStatements().contains(statement)){
+                if(rule.getParentStmt() != null){
+                    if(parentStmt == null){
+                        continue;
+                    }
+                    if(!rule.getParentStmt().equals(parentStmt)){
+                        continue;
+                    }
+                }
                 if(matchCondition(rule,changeInfo)){
                     return rule;
                 }

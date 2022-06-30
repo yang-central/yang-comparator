@@ -81,16 +81,15 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         return new CompatibilityInfo(CompatibilityRule.Compatibility.BC,null);
     }
 
-    public static String getStatement(YangStatement left, YangStatement right){
-        YangStatement effective = left;
-        if(effective == null){
-            effective = right;
+    public static String getStatement(YangStatement stmt){
+        if(stmt == null){
+            return null;
         }
         String statement = null;
-        if(effective instanceof YangBuiltinStatement){
-            statement = effective.getYangKeyword().getLocalName();
+        if(stmt instanceof YangBuiltinStatement){
+            statement = stmt.getYangKeyword().getLocalName();
         } else {
-            YangUnknown unknown = (YangUnknown) effective;
+            YangUnknown unknown = (YangUnknown) stmt;
             String moduleName = unknown.getExtension().getContext().getCurModule().getMainModule().getArgStr();
             String extensionName = unknown.getExtension().getArgStr();
             statement = moduleName + ":" + extensionName;
@@ -108,14 +107,16 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<CompatibilityRule.ChangeInfo> changeInfos = getChangeInfo(left,right);
         if(!changeInfos.isEmpty()){
-            String statement = getStatement(left,right);
+            YangStatement effectiveStmt = left==null?right:left;
+            String statement = getStatement(effectiveStmt);
+            String parentStmt = getStatement(effectiveStmt.getParentStatement());
             for(CompatibilityRule.ChangeInfo changeInfo:changeInfos){
                 if(changeInfo == CompatibilityRule.ChangeInfo.IGNORE){
                     continue;
                 }
                 CompatibilityRule compatibilityRule = null;
                 if(null != getCompatibilityRules()){
-                    compatibilityRule = getCompatibilityRules().searchRule(statement, changeInfo);
+                    compatibilityRule = getCompatibilityRules().searchRule(statement,parentStmt, changeInfo);
                 }
                 if(compatibilityRule == null){
                     //ignore sequence change
@@ -191,7 +192,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         return false;
     }
 
-    private static YangStatement searchStatement(YangStatement statement,List<YangStatement> target,List<YangStatement> matched){
+    protected static YangStatement searchStatement(YangStatement statement,List<YangStatement> target,List<YangStatement> matched){
         if(null == target || target.size() == 0){
             return null;
         }
@@ -322,17 +323,17 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
                 }
                 if(rightSubStatements.size()==0){
                     //no right statement, so change type is delete
-                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement,null));
+                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement));
                     compareResults.addAll(comparator.compare(leftSubStatement,null));
                     continue;
                 }
                 YangStatement matchedRightSubStatement = searchStatement(leftSubStatement,rightSubStatements,foundStatements);
                 if(null == matchedRightSubStatement){
-                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement,null));
+                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement));
                     compareResults.addAll(comparator.compare(leftSubStatement,null));
                 } else {
                     foundStatements.add(matchedRightSubStatement);
-                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement,matchedRightSubStatement));
+                    YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(leftSubStatement==null?matchedRightSubStatement:leftSubStatement));
                     compareResults.addAll(comparator.compare(leftSubStatement,matchedRightSubStatement));
                 }
             }
@@ -354,7 +355,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
                 if(contains(foundStatements,rightSubElement)){
                     continue;
                 }
-                YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(null,rightSubElement));
+                YangStatementComparator comparator = YangComparatorRegister.getInstance().getComparator(getStatement(rightSubElement));
                 compareResults.addAll(comparator.compare(null,rightSubElement));
             }
         }

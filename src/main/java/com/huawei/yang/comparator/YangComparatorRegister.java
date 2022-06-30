@@ -97,6 +97,8 @@ public class YangComparatorRegister {
         registerComparator(YangBuiltinKeyword.IDENTITY.getKeyword(), new IdentifierComparator());
         //if-feature
         registerComparator(YangBuiltinKeyword.IFFEATURE.getKeyword(), new IfFeatureComparator());
+        //unique
+        registerComparator(YangBuiltinKeyword.UNIQUE.getKeyword(), new UniqueComparator());
 
     }
 }

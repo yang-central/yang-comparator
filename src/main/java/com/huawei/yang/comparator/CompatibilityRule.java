@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class CompatibilityRule {
     private String ruleId;
+    private String parentStmt;
     private List<String> statements;//[module_name:]keyword, for example, container/huawei-extension:filter
     //private List<RuleType> ruleTypes;//STMT OR TREE
     private ChangeInfo condition;
@@ -28,6 +29,15 @@ public class CompatibilityRule {
         this.condition = condition;
         this.compatibility = compatibility;
     }
+
+    public String getParentStmt() {
+        return parentStmt;
+    }
+
+    public void setParentStmt(String parentStmt) {
+        this.parentStmt = parentStmt;
+    }
+
     public List<ChangeInfo> getExceptConditions() {
         return exceptConditions;
     }
@@ -162,6 +172,7 @@ public class CompatibilityRule {
     public static CompatibilityRule deserialize(Element element){
         Element ruleIdElement = element.element("rule-id");
         String ruleId = ruleIdElement.getTextTrim();
+
         Element statementsElement = element.element("statements");
         List<Element> statementElementList = statementsElement.elements("statement");
         List<String> statements = null;
@@ -190,6 +201,10 @@ public class CompatibilityRule {
         CompatibilityRule rule = new CompatibilityRule(ruleId,statements,condition,compatibility);
         rule.setExceptCondition(exceptConditions);
         rule.setDescription(description);
+        Element parentStmtElement = element.element("parent-statement");
+        if(parentStmtElement != null){
+            rule.setParentStmt(parentStmtElement.getTextTrim());
+        }
         return rule;
     }
 }
