@@ -1,6 +1,6 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.MaxElements;
+import org.yangcentral.yangkit.model.api.stmt.MaxElements;
 
 import java.util.ArrayList;
 import java.util.List;

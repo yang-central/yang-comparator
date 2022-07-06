@@ -1,6 +1,6 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.type.SectionExpression;
+import org.yangcentral.yangkit.model.api.stmt.type.SectionExpression;
 
 
 import java.util.ArrayList;

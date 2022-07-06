@@ -1,8 +1,8 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.Base;
-import com.huawei.yang.model.api.stmt.Identity;
-import com.huawei.yang.model.api.stmt.Type;
+import org.yangcentral.yangkit.model.api.stmt.Base;
+import org.yangcentral.yangkit.model.api.stmt.Identity;
+import org.yangcentral.yangkit.model.api.stmt.Type;
 
 /**
  * 功能描述

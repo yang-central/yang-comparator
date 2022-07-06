@@ -1,8 +1,8 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.Leaf;
-import com.huawei.yang.model.api.stmt.Unique;
-import com.huawei.yang.model.api.stmt.YangStatement;
+import org.yangcentral.yangkit.model.api.stmt.Leaf;
+import org.yangcentral.yangkit.model.api.stmt.Unique;
+import org.yangcentral.yangkit.model.api.stmt.YangStatement;
 
 import java.util.ArrayList;
 import java.util.List;

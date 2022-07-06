@@ -1,6 +1,6 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.Description;
+import org.yangcentral.yangkit.model.api.stmt.Description;
 
 /**
  * 功能描述

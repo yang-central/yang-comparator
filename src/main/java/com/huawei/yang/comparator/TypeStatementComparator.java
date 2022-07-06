@@ -1,9 +1,9 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.base.YangBuiltinKeyword;
-import com.huawei.yang.model.api.restriction.YangInteger;
-import com.huawei.yang.model.api.stmt.Type;
-import com.huawei.yang.model.api.stmt.YangStatement;
+import org.yangcentral.yangkit.base.YangBuiltinKeyword;
+import org.yangcentral.yangkit.model.api.restriction.YangInteger;
+import org.yangcentral.yangkit.model.api.stmt.Type;
+import org.yangcentral.yangkit.model.api.stmt.YangStatement;
 
 import java.util.ArrayList;
 import java.util.List;

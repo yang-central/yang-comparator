@@ -1,8 +1,8 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.SchemaNode;
-import com.huawei.yang.model.api.stmt.SchemaNodeContainer;
-import com.huawei.yang.model.api.stmt.VirtualSchemaNode;
+import org.yangcentral.yangkit.model.api.stmt.SchemaNode;
+import org.yangcentral.yangkit.model.api.stmt.SchemaNodeContainer;
+import org.yangcentral.yangkit.model.api.stmt.VirtualSchemaNode;
 
 import java.util.ArrayList;
 import java.util.List;

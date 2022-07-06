@@ -1,7 +1,7 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.MainModule;
-import com.huawei.yang.model.api.stmt.Module;
+import org.yangcentral.yangkit.model.api.stmt.MainModule;
+import org.yangcentral.yangkit.model.api.stmt.Module;
 
 import java.util.ArrayList;
 import java.util.List;

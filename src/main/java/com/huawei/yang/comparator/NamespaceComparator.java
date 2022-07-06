@@ -1,6 +1,6 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.Namespace;
+import org.yangcentral.yangkit.model.api.stmt.Namespace;
 
 /**
  * 功能描述

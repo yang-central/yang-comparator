@@ -1,7 +1,7 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.model.api.stmt.Status;
-import com.huawei.yang.model.api.stmt.StatusStmt;
+import org.yangcentral.yangkit.model.api.stmt.Status;
+import org.yangcentral.yangkit.model.api.stmt.StatusStmt;
 
 import java.util.ArrayList;
 import java.util.List;

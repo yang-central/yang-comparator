@@ -1,6 +1,6 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.base.YangBuiltinKeyword;
+import org.yangcentral.yangkit.base.YangBuiltinKeyword;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

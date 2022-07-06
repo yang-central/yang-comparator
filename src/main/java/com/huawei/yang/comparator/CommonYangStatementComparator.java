@@ -1,14 +1,14 @@
 package com.huawei.yang.comparator;
 
-import com.huawei.yang.base.Cardinality;
-import com.huawei.yang.base.YangElement;
-import com.huawei.yang.base.YangStatementDef;
-import com.huawei.yang.model.api.stmt.IdentifierRef;
-import com.huawei.yang.model.api.stmt.SchemaNode;
-import com.huawei.yang.model.api.stmt.VirtualSchemaNode;
-import com.huawei.yang.model.api.stmt.YangBuiltinStatement;
-import com.huawei.yang.model.api.stmt.YangStatement;
-import com.huawei.yang.model.api.stmt.YangUnknown;
+import org.yangcentral.yangkit.base.Cardinality;
+import org.yangcentral.yangkit.base.YangElement;
+import org.yangcentral.yangkit.base.YangStatementDef;
+import org.yangcentral.yangkit.model.api.stmt.IdentifierRef;
+import org.yangcentral.yangkit.model.api.stmt.SchemaNode;
+import org.yangcentral.yangkit.model.api.stmt.VirtualSchemaNode;
+import org.yangcentral.yangkit.model.api.stmt.YangBuiltinStatement;
+import org.yangcentral.yangkit.model.api.stmt.YangStatement;
+import org.yangcentral.yangkit.model.api.stmt.YangUnknown;
 
 import java.util.ArrayList;
 import java.util.List;
