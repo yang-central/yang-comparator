@@ -3,6 +3,7 @@ package com.huawei.yang.comparator;
 import org.yangcentral.yangkit.base.Cardinality;
 import org.yangcentral.yangkit.base.YangElement;
 import org.yangcentral.yangkit.base.YangStatementDef;
+import org.yangcentral.yangkit.common.api.validate.ValidatorResult;
 import org.yangcentral.yangkit.model.api.schema.SchemaTreeType;
 import org.yangcentral.yangkit.model.api.schema.YangSchemaContext;
 import org.yangcentral.yangkit.model.api.stmt.Choice;
@@ -35,6 +36,7 @@ import org.yangcentral.yangkit.model.api.stmt.YangStatement;
 import org.yangcentral.yangkit.model.api.stmt.YangUnknown;
 import org.yangcentral.yangkit.parser.YangParserException;
 import org.yangcentral.yangkit.parser.YangYinParser;
+import org.yangcentral.yangkit.utils.file.FileUtil;
 import org.yangcentral.yangkit.utils.xml.XmlWriter;
 
 import org.dom4j.Attribute;
@@ -384,7 +386,7 @@ public class YangComparator {
             if(contains(matched,rightSubStatement)){
                 continue;
             }
-            if(yangStatementIsEqual(statement,rightSubStatement)){
+            if(CommonYangStatementComparator.yangStatementIsEqual(statement,rightSubStatement)){
                 matchedTargetStmts.add(rightSubStatement) ;
                 continue;
             }
@@ -448,28 +450,28 @@ public class YangComparator {
         return null;
     }
 
-    private boolean yangStatementIsEqual(YangStatement left,YangStatement right){
-        if(left instanceof IdentifierRef && right instanceof IdentifierRef){
-            if(!left.getYangKeyword().equals(right.getYangKeyword())){
-                return false;
-            }
-            YangStatement leftRefStatement = ((IdentifierRef)left).getReferenceStatement();
-            YangStatement rightRefStatement = ((IdentifierRef)right).getReferenceStatement();
-            if(leftRefStatement != null && rightRefStatement != null && leftRefStatement.equals(rightRefStatement)){
-                return true;
-            } else if(leftRefStatement == null && rightRefStatement == null){
-                if(left.getArgStr().equals(right.getArgStr())){
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        return left.equals(right);
-    }
+//    private boolean yangStatementIsEqual(YangStatement left,YangStatement right){
+//        if(left instanceof IdentifierRef && right instanceof IdentifierRef){
+//            if(!left.getYangKeyword().equals(right.getYangKeyword())){
+//                return false;
+//            }
+//            YangStatement leftRefStatement = ((IdentifierRef)left).getReferenceStatement();
+//            YangStatement rightRefStatement = ((IdentifierRef)right).getReferenceStatement();
+//            if(leftRefStatement != null && rightRefStatement != null && leftRefStatement.equals(rightRefStatement)){
+//                return true;
+//            } else if(leftRefStatement == null && rightRefStatement == null){
+//                if(left.getArgStr().equals(right.getArgStr())){
+//                    return true;
+//                }
+//                else {
+//                    return false;
+//                }
+//            } else {
+//                return false;
+//            }
+//        }
+//        return left.equals(right);
+//    }
     public List<YangCompareResult> compareStatement(YangStatement left,YangStatement right){
         return compareStatement(left,right,false);
     }
@@ -552,7 +554,7 @@ public class YangComparator {
             return compareResults;
         }
 
-        if(!yangStatementIsEqual(left,right)){
+        if(!CommonYangStatementComparator.yangStatementIsEqual(left,right)){
             YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.MODIFY,
                 left,right);
             compareResults.add(yangStatementCompareResult);
@@ -903,6 +905,10 @@ public class YangComparator {
             return;
         }
         String output = args[outBegin + 1];
+        File outputFile = new File(output);
+        if(!outputFile.exists()){
+            outputFile.createNewFile();
+        }
         String compareType = args[typeBegin];
         String rule = null;
         String filter = null;
@@ -918,7 +924,8 @@ public class YangComparator {
             }
         }
         YangSchemaContext leftSchemaContext = YangYinParser.parse(leftYangDir,leftDepDir,leftCap);
-        leftSchemaContext.validate();
+        ValidatorResult leftValidatorResult = leftSchemaContext.validate();
+
         YangSchemaContext rightSchemaContext = YangYinParser.parse(rightYangDir,rightDepDir,rightCap);
         rightSchemaContext.validate();
         if(rule != null){

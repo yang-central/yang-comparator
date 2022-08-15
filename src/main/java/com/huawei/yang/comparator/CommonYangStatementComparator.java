@@ -3,12 +3,7 @@ package com.huawei.yang.comparator;
 import org.yangcentral.yangkit.base.Cardinality;
 import org.yangcentral.yangkit.base.YangElement;
 import org.yangcentral.yangkit.base.YangStatementDef;
-import org.yangcentral.yangkit.model.api.stmt.IdentifierRef;
-import org.yangcentral.yangkit.model.api.stmt.SchemaNode;
-import org.yangcentral.yangkit.model.api.stmt.VirtualSchemaNode;
-import org.yangcentral.yangkit.model.api.stmt.YangBuiltinStatement;
-import org.yangcentral.yangkit.model.api.stmt.YangStatement;
-import org.yangcentral.yangkit.model.api.stmt.YangUnknown;
+import org.yangcentral.yangkit.model.api.stmt.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -269,8 +264,8 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         return null;
     }
 
-    private static boolean yangStatementIsEqual(YangStatement left,YangStatement right){
-        if(left instanceof IdentifierRef && right instanceof IdentifierRef){
+    public static boolean yangStatementIsEqual(YangStatement left,YangStatement right){
+        if((left instanceof IdentifierRef) && (right instanceof IdentifierRef)){
             if(!left.getYangKeyword().equals(right.getYangKeyword())){
                 return false;
             }
@@ -293,15 +288,16 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
     }
 
     public static List<YangCompareResult> compareStatements(List<? extends YangStatement> leftElements,
-        List<? extends YangStatement> rightElements,boolean exceptSchemaNode){
+        List<? extends YangStatement> rightElements,boolean onlyMeta){
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<YangStatement> foundStatements = new ArrayList<>();
 
         if(leftElements.size() > 0){
             for(YangStatement subElement:leftElements){
                 YangStatement leftSubStatement = subElement;
-                if(exceptSchemaNode){
-                    if((leftSubStatement instanceof SchemaNode) && !(leftSubStatement instanceof VirtualSchemaNode)){
+                if(onlyMeta){
+                    if((leftSubStatement instanceof SchemaNode)
+                    ||(leftSubStatement instanceof Referencable)){
                         continue;
                     }
                 }
@@ -340,8 +336,9 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         }
         if(rightElements.size() > 0){
             for(YangStatement subElement:rightElements){
-                if(exceptSchemaNode){
-                    if((subElement instanceof SchemaNode) && !(subElement instanceof VirtualSchemaNode)){
+                if(onlyMeta){
+                    if((subElement instanceof SchemaNode)
+                            ||(subElement instanceof Referencable)){
                         continue;
                     }
                 }

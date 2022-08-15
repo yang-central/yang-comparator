@@ -53,7 +53,7 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
         if(temp == null){
             temp = right;
         }
-        if((temp instanceof SchemaNodeContainer) && !(temp instanceof VirtualSchemaNode)){
+        if((temp instanceof SchemaNodeContainer)){
             SchemaNodeContainer leftContainer = (SchemaNodeContainer) left;
             SchemaNodeContainer rightContainer = (SchemaNodeContainer) right;
             results.addAll(compareStatements(leftContainer==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(leftContainer),
