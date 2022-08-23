@@ -907,6 +907,9 @@ public class YangComparator {
         String output = args[outBegin + 1];
         File outputFile = new File(output);
         if(!outputFile.exists()){
+            if(!outputFile.getParentFile().exists()){
+                outputFile.getParentFile().mkdirs();
+            }
             outputFile.createNewFile();
         }
         String compareType = args[typeBegin];
@@ -925,6 +928,7 @@ public class YangComparator {
         }
         YangSchemaContext leftSchemaContext = YangYinParser.parse(leftYangDir,leftDepDir,leftCap);
         ValidatorResult leftValidatorResult = leftSchemaContext.validate();
+        System.out.println(leftValidatorResult);
 
         YangSchemaContext rightSchemaContext = YangYinParser.parse(rightYangDir,rightDepDir,rightCap);
         rightSchemaContext.validate();
