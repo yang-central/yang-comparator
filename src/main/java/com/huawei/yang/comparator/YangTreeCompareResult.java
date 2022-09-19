@@ -77,7 +77,9 @@ public class YangTreeCompareResult implements YangCompareResult<SchemaNode>{
             sb.append("\t").append(changeDescription);
             return sb.toString();
         }
-        sb.append(schemaPath.toString());
+        if(null != schemaPath){
+            sb.append(schemaPath.toString());
+        }
         sb.append("\t@").append("module:");
         switch (changeType){
             case ADD:

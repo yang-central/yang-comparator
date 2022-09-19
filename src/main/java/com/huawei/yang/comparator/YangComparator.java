@@ -4,6 +4,9 @@ import org.yangcentral.yangkit.base.Cardinality;
 import org.yangcentral.yangkit.base.YangElement;
 import org.yangcentral.yangkit.base.YangStatementDef;
 import org.yangcentral.yangkit.common.api.validate.ValidatorResult;
+import org.yangcentral.yangkit.compiler.Settings;
+import org.yangcentral.yangkit.compiler.YangCompiler;
+import org.yangcentral.yangkit.compiler.YangCompilerException;
 import org.yangcentral.yangkit.model.api.schema.SchemaTreeType;
 import org.yangcentral.yangkit.model.api.schema.YangSchemaContext;
 import org.yangcentral.yangkit.model.api.stmt.Choice;
@@ -36,6 +39,8 @@ import org.yangcentral.yangkit.model.api.stmt.YangStatement;
 import org.yangcentral.yangkit.model.api.stmt.YangUnknown;
 import org.yangcentral.yangkit.parser.YangParserException;
 import org.yangcentral.yangkit.parser.YangYinParser;
+import org.yangcentral.yangkit.plugin.YangCompilerPlugin;
+import org.yangcentral.yangkit.plugin.YangCompilerPluginParameter;
 import org.yangcentral.yangkit.utils.file.FileUtil;
 import org.yangcentral.yangkit.utils.xml.XmlWriter;
 
@@ -48,11 +53,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 功能描述
@@ -639,10 +640,10 @@ public class YangComparator {
         }
         return sb.toString();
     }
-    private Document outputXmlCompareResult(List<YangCompareResult> compareResults,CompareType compareType){
+    public Document outputXmlCompareResult(List<YangCompareResult> compareResults,CompareType compareType){
         return outputXmlCompareResult(compareResults,true,compareType);
     }
-    private Document outputXmlCompareResult(List<YangCompareResult> compareResults,boolean needCompatible,CompareType compareType){
+    public Document outputXmlCompareResult(List<YangCompareResult> compareResults,boolean needCompatible,CompareType compareType){
         Map<String,List<YangCompareResult>> resortedResults = resortYangCompareResult(compareResults);
         Element root = DocumentHelper.createElement("modules");
         Document document = DocumentHelper.createDocument(root);
@@ -800,6 +801,30 @@ public class YangComparator {
         return sb.toString();
     }
 
+    public List<YangCompareResult> compare(CompareType compareType,String rule) throws DocumentException {
+        if(rule != null){
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(new File(rule));
+            CompatibilityRules.getInstance().deserialize(document);
+        }
+        List<YangCompareResult> compareResults = new ArrayList<>();
+        if(compareType == CompareType.STMT){
+            compareResults = compareStatement();
+
+        } else if (compareType == CompareType.TREE){
+            compareResults = CommonYangStatementComparator.compareStatements(
+                    getEffectiveSchemaNodeChildren(this.leftContext),
+                    getEffectiveSchemaNodeChildren(rightContext),false
+            );
+        } else if(compareType == CompareType.COMPATIBLE_CHECK){
+            compareResults = CommonYangStatementComparator.compareStatements(
+                    leftContext.getModules(),rightContext.getModules(),false
+            );
+        }
+        return compareResults;
+    }
+
+
     /**
      * usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]
      *        -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]
@@ -912,11 +937,11 @@ public class YangComparator {
             }
             outputFile.createNewFile();
         }
-        String compareType = args[typeBegin];
+        String compareTypeStr = args[typeBegin];
         String rule = null;
         String filter = null;
-        if(compareType.equalsIgnoreCase("-compatible-check")
-          || compareType.equalsIgnoreCase("-tree")){
+        if(compareTypeStr.equalsIgnoreCase("-compatible-check")
+          || compareTypeStr.equalsIgnoreCase("-tree")){
             for(int i = typeBegin;i < args.length;i++){
                 String arg = args[i];
                 if(arg.equalsIgnoreCase("--rule")){
@@ -932,29 +957,24 @@ public class YangComparator {
 
         YangSchemaContext rightSchemaContext = YangYinParser.parse(rightYangDir,rightDepDir,rightCap);
         rightSchemaContext.validate();
-        if(rule != null){
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(new File(rule));
-            CompatibilityRules.getInstance().deserialize(document);
-        }
 
         YangComparator comparator = new YangComparator(leftSchemaContext,rightSchemaContext);
-        List<YangCompareResult> compareResults = new ArrayList<>();
-        if(compareType.equalsIgnoreCase("-stmt")){
-            compareResults = comparator.compareStatement();
-            XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,false,CompareType.STMT),output);
-        } else if (compareType.equalsIgnoreCase("-tree")){
-            compareResults = CommonYangStatementComparator.compareStatements(
-                getEffectiveSchemaNodeChildren(leftSchemaContext),getEffectiveSchemaNodeChildren(rightSchemaContext),false
-            );
-            XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,false,CompareType.TREE),output);
-        } else if(compareType.equalsIgnoreCase("-compatible-check")){
-            compareResults = CommonYangStatementComparator.compareStatements(
-                leftSchemaContext.getModules(),rightSchemaContext.getModules(),false
-            );
-            XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,CompareType.COMPATIBLE_CHECK),output);
+        CompareType compareType = null;
+        if(compareTypeStr.equalsIgnoreCase("-stmt")){
+            compareType = CompareType.STMT;
+        } else if (compareTypeStr.equalsIgnoreCase("-tree")){
+            compareType = CompareType.TREE;
+        } else if(compareTypeStr.equalsIgnoreCase("-compatible-check")){
+            compareType = CompareType.COMPATIBLE_CHECK;
         }
 
-
+        List<YangCompareResult> compareResults = comparator.compare(compareType,rule);
+        boolean needCompatible = false;
+        if(compareType == CompareType.COMPATIBLE_CHECK){
+            needCompatible = true;
+        }
+        XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,needCompatible,CompareType.STMT),output);
     }
+
+
 }

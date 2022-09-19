@@ -101,8 +101,13 @@ public class YangCompareResultXmlSerializer extends YangCompareResultSerializer<
         }
 
         //schema-path
-        Attribute link = DocumentHelper.createAttribute(element,"link",yangTreeCompareResult.getSchemaPath().toString());
-        element.add(link);
+        if(yangTreeCompareResult.getSchemaPath() != null){
+            Attribute link = DocumentHelper.createAttribute(element,"link",yangTreeCompareResult.getSchemaPath().toString());
+            element.add(link);
+        } else {
+            System.out.println(yangTreeCompareResult.getChangeDescription("  "));
+        }
+
         //position
         Element position = DocumentHelper.createElement("position");
         StringBuffer sb = new StringBuffer();
