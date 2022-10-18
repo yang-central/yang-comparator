@@ -1,7 +1,7 @@
 # yang-comparator
 yang comparator is a tool which can compare two versions of yang releases. It can help users to identify the differences of the two versions.
 
-Yang comparator provide three main functions:compare statements, compare tree and check the compatibility between two versions.
+Yang comparator provides three main functions:compare statements, compare tree and check the compatibility between two versions.
 
 ### compare statements
 compare the statements of the two yang release versions. It will identify the statements which are added,changed, or deleted for every yang files between the previous version and current version.
