@@ -953,7 +953,7 @@ public class YangComparator {
         }
         YangSchemaContext leftSchemaContext = YangYinParser.parse(leftYangDir,leftDepDir,leftCap);
         ValidatorResult leftValidatorResult = leftSchemaContext.validate();
-        System.out.println(leftValidatorResult);
+        //System.out.println(leftValidatorResult);
 
         YangSchemaContext rightSchemaContext = YangYinParser.parse(rightYangDir,rightDepDir,rightCap);
         rightSchemaContext.validate();
@@ -973,7 +973,7 @@ public class YangComparator {
         if(compareType == CompareType.COMPATIBLE_CHECK){
             needCompatible = true;
         }
-        XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,needCompatible,CompareType.STMT),output);
+        XmlWriter.writeDom4jDoc(comparator.outputXmlCompareResult(compareResults,needCompatible,compareType),output);
     }
 
 
