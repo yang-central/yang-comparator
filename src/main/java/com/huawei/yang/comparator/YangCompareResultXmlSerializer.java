@@ -67,7 +67,9 @@ public class YangCompareResultXmlSerializer extends YangCompareResultSerializer<
                 //statement
                 Element fromStatement = DocumentHelper.createElement("statement");
                 from.add(fromStatement);
-                fromStatement.setText(YangComparator.outputStatement(yangStatementCompareResult.getLeft()));
+                Attribute fromName = DocumentHelper.createAttribute(fromStatement,"text",
+                        YangComparator.outputStatement(yangStatementCompareResult.getLeft()));
+                fromStatement.add(fromName);
                 //position
                 Element fromPosition = DocumentHelper.createElement("position");
                 from.add(fromPosition);
