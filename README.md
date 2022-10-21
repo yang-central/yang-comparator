@@ -1,7 +1,7 @@
 # yang-comparator
 yang comparator is a tool which can compare two versions of yang releases. It can help users to identify the differences of the two versions.
 
-Yang comparator provide three main functions:compare statements, compare tree and check the compatibility between two versions.
+Yang comparator provides three main functions:compare statements, compare tree and check the compatibility between two versions.
 
 ### compare statements
 compare the statements of the two yang release versions. It will identify the statements which are added,changed, or deleted for every yang files between the previous version and current version.
@@ -9,20 +9,18 @@ These differences are all textual differences , not the effective differences.
 For example:
 
 previous statements:
-    
+```
 leaf foo {
-      
-      type string;
+  type string;
 }
-    
+``` 
    current statements:
-
+``` 
 leaf foo {
-
-      type string;
-      mandatory false;
+   type string;
+   mandatory false;
 }
-    
+```     
 The difference will be "mandatory false" is added, although the previous leaf foo is 'mandatory false' by default.
 
 ### compare tree
@@ -38,22 +36,18 @@ The difference will be "mandatory false" is added, although the previous leaf fo
   For example:
 
   previous statements:
-
+``` 
   leaf foo {
-
-      type string;
-
+    type string;
   }
-
+``` 
   current statements:
-
+``` 
   leaf foo {
-
-      type string;
-      mandatory true;
-
+    type string;
+    mandatory true;
   }
-
+``` 
   The difference will be changed from false to true , although the previous statements have no mandatory statement.
 ### check compatibility
   This function will output the compatibility results after comparing the two yang release versions. 
@@ -93,18 +87,22 @@ The difference will be "mandatory false" is added, although the previous leaf fo
 * JDK or JRE 1.8 or above
 
 ### Obtain code
-git clone https://github.com/HuaweiDatacomm/yang-comparator.git
-
+``` 
+#git clone https://github.com/HuaweiDatacomm/yang-comparator.git
+``` 
 ### build code
-mvn clean install
-
+``` 
+#cd yang-comparator
+#mvn clean install
+``` 
 it will generate yang-comparator-1.0-SNAPSHOT.jar and libs directory under the directory target
 
 copy yang-comparator-1.0-SNAPSHOT.jar and libs to anywhere in your computer.
 
 ## Usage:
-java -jar yang-comparator-1.0-SNAPSHOT.jar _arguments_
-
+``` 
+#java -jar yang-comparator-1.0-SNAPSHOT.jar _arguments_
+``` 
 arguments:
 
 -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml} ]
@@ -122,21 +120,21 @@ download 8.20.10 and 8.21.0 versions yang files of network-router from https://g
 cd example and execute the commands:
 
 get statement difference:
-
-java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_stmt.xml -stmt
-
+``` 
+#java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_stmt.xml -stmt
+``` 
 get schema node path difference:
-
-java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_tree.xml -tree
-
+``` 
+#java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/diff_tree.xml -tree
+``` 
 get compatibility result:
-
-java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility.xml -compatible-check
-
+``` 
+#java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility.xml -compatible-check
+``` 
 get compatibility with rule result:
-
-java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility_rule.xml -compatible-check --rule rules.xml
-
+``` 
+#java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility_rule.xml -compatible-check --rule rules.xml
+``` 
 
 
 
