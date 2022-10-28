@@ -4,44 +4,12 @@ import org.yangcentral.yangkit.base.Cardinality;
 import org.yangcentral.yangkit.base.YangElement;
 import org.yangcentral.yangkit.base.YangStatementDef;
 import org.yangcentral.yangkit.common.api.validate.ValidatorResult;
-import org.yangcentral.yangkit.compiler.Settings;
-import org.yangcentral.yangkit.compiler.YangCompiler;
-import org.yangcentral.yangkit.compiler.YangCompilerException;
 import org.yangcentral.yangkit.model.api.schema.SchemaTreeType;
 import org.yangcentral.yangkit.model.api.schema.YangSchemaContext;
-import org.yangcentral.yangkit.model.api.stmt.Choice;
-import org.yangcentral.yangkit.model.api.stmt.ConfigSupport;
-import org.yangcentral.yangkit.model.api.stmt.Container;
-import org.yangcentral.yangkit.model.api.stmt.Default;
-import org.yangcentral.yangkit.model.api.stmt.IdentifierRef;
-import org.yangcentral.yangkit.model.api.stmt.IfFeature;
-import org.yangcentral.yangkit.model.api.stmt.IfFeatureSupport;
-import org.yangcentral.yangkit.model.api.stmt.Leaf;
-import org.yangcentral.yangkit.model.api.stmt.LeafList;
-import org.yangcentral.yangkit.model.api.stmt.MandatorySupport;
-import org.yangcentral.yangkit.model.api.stmt.Module;
-import org.yangcentral.yangkit.model.api.stmt.MultiInstancesDataNode;
-import org.yangcentral.yangkit.model.api.stmt.Must;
-import org.yangcentral.yangkit.model.api.stmt.MustSupport;
-import org.yangcentral.yangkit.model.api.stmt.OrderBy;
-import org.yangcentral.yangkit.model.api.stmt.SchemaNode;
-import org.yangcentral.yangkit.model.api.stmt.SchemaNodeContainer;
-import org.yangcentral.yangkit.model.api.stmt.Status;
-import org.yangcentral.yangkit.model.api.stmt.StatusStmt;
-import org.yangcentral.yangkit.model.api.stmt.SubModule;
-import org.yangcentral.yangkit.model.api.stmt.TypedDataNode;
-import org.yangcentral.yangkit.model.api.stmt.Unique;
-import org.yangcentral.yangkit.model.api.stmt.VirtualSchemaNode;
-import org.yangcentral.yangkit.model.api.stmt.WhenSupport;
-import org.yangcentral.yangkit.model.api.stmt.YangBuiltinStatement;
-import org.yangcentral.yangkit.model.api.stmt.YangList;
-import org.yangcentral.yangkit.model.api.stmt.YangStatement;
-import org.yangcentral.yangkit.model.api.stmt.YangUnknown;
+import org.yangcentral.yangkit.model.api.stmt.*;
 import org.yangcentral.yangkit.parser.YangParserException;
 import org.yangcentral.yangkit.parser.YangYinParser;
-import org.yangcentral.yangkit.plugin.YangCompilerPlugin;
-import org.yangcentral.yangkit.plugin.YangCompilerPluginParameter;
-import org.yangcentral.yangkit.utils.file.FileUtil;
+import org.yangcentral.yangkit.common.api.Namespace;
 import org.yangcentral.yangkit.utils.xml.XmlWriter;
 
 import org.dom4j.Attribute;
@@ -233,16 +201,34 @@ public class YangComparator {
         return compareResults;
     }
 
+    public static List<SchemaNode> getModuleTreeNodes(MainModule module){
+        List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
+        effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(module));
+        for(Augment augment: module.getAugments()){
+            effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(augment));
+        }
+        return effectiveSchemaNodeChildren;
+    }
     public static List<SchemaNode> getEffectiveSchemaNodeChildren (SchemaNodeContainer schemaNodeContainer){
         List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
         for(SchemaNode schemaNode:schemaNodeContainer.getSchemaNodeChildren()){
             if(schemaNode instanceof VirtualSchemaNode){
                 VirtualSchemaNode virtualSchemaNode = (VirtualSchemaNode) schemaNode;
                 effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(virtualSchemaNode));
+            } else {
+                if(schemaNodeContainer instanceof YangStatement){
+                    YangStatement parent = (YangStatement) schemaNodeContainer;
+                    Namespace parentNs = parent.getContext().getNamespace();
+                    Namespace childNs = schemaNode.getContext().getNamespace();
+                    if(parentNs != null && childNs != null && parentNs.getUri().equals(childNs.getUri())){
+                        effectiveSchemaNodeChildren.add(schemaNode);
+                    }
+                } else {
+                    effectiveSchemaNodeChildren.add(schemaNode);
+                }
             }
-            else {
-                effectiveSchemaNodeChildren.add(schemaNode);
-            }
+
+
         }
         return effectiveSchemaNodeChildren;
     }
@@ -812,9 +798,21 @@ public class YangComparator {
             compareResults = compareStatement();
 
         } else if (compareType == CompareType.TREE){
+            List<SchemaNode> leftSchemaNodeChildren = new ArrayList<>();
+            for(Module module:leftContext.getModules()){
+                if(module instanceof MainModule){
+                    leftSchemaNodeChildren.addAll(getModuleTreeNodes((MainModule) module));
+                }
+            }
+            List<SchemaNode> rightSchemaNodeChildren = new ArrayList<>();
+            for(Module module:rightContext.getModules()){
+                if(module instanceof MainModule){
+                    rightSchemaNodeChildren.addAll(getModuleTreeNodes((MainModule) module));
+                }
+            }
             compareResults = CommonYangStatementComparator.compareStatements(
-                    getEffectiveSchemaNodeChildren(this.leftContext),
-                    getEffectiveSchemaNodeChildren(rightContext),false
+                    leftSchemaNodeChildren,
+                    rightSchemaNodeChildren,false
             );
         } else if(compareType == CompareType.COMPATIBLE_CHECK){
             compareResults = CommonYangStatementComparator.compareStatements(
