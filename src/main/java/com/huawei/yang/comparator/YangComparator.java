@@ -7,6 +7,7 @@ import org.yangcentral.yangkit.common.api.validate.ValidatorResult;
 import org.yangcentral.yangkit.model.api.schema.SchemaTreeType;
 import org.yangcentral.yangkit.model.api.schema.YangSchemaContext;
 import org.yangcentral.yangkit.model.api.stmt.*;
+import org.yangcentral.yangkit.model.api.stmt.Module;
 import org.yangcentral.yangkit.parser.YangParserException;
 import org.yangcentral.yangkit.parser.YangYinParser;
 import org.yangcentral.yangkit.common.api.Namespace;
@@ -212,23 +213,19 @@ public class YangComparator {
     public static List<SchemaNode> getEffectiveSchemaNodeChildren (SchemaNodeContainer schemaNodeContainer){
         List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
         for(SchemaNode schemaNode:schemaNodeContainer.getSchemaNodeChildren()){
+            YangStatement parent = (YangStatement) schemaNodeContainer;
+            Namespace parentNs = parent.getContext().getNamespace();
+            Namespace childNs = schemaNode.getContext().getNamespace();
+            if(parentNs == null || childNs == null || !parentNs.getUri().equals(childNs.getUri())){
+                continue;
+            }
             if(schemaNode instanceof VirtualSchemaNode){
                 VirtualSchemaNode virtualSchemaNode = (VirtualSchemaNode) schemaNode;
                 effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(virtualSchemaNode));
-            } else {
-                if(schemaNodeContainer instanceof YangStatement){
-                    YangStatement parent = (YangStatement) schemaNodeContainer;
-                    Namespace parentNs = parent.getContext().getNamespace();
-                    Namespace childNs = schemaNode.getContext().getNamespace();
-                    if(parentNs != null && childNs != null && parentNs.getUri().equals(childNs.getUri())){
-                        effectiveSchemaNodeChildren.add(schemaNode);
-                    }
-                } else {
-                    effectiveSchemaNodeChildren.add(schemaNode);
-                }
             }
-
-
+            else {
+                effectiveSchemaNodeChildren.add(schemaNode);
+            }
         }
         return effectiveSchemaNodeChildren;
     }
