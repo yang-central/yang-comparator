@@ -1,22 +1,22 @@
-# yang-comparator
+# YANG Comparator
 yang comparator is a tool which can compare two versions of yang releases. It can help users to identify the differences of the two versions.
 It can work as a standalone application or as a plugin of [YANG compiler](https://github.com/yang-central/yang-compiler).
 
 Yang comparator provides three main functions:compare statements, compare tree and check the compatibility between two versions.
 
-### compare statements
+## Compare statements
 compare the statements of the two yang release versions. It will identify the statements which are added,changed, or deleted for every yang files between the previous version and current version.
 These differences are all textual differences , not the effective differences. 
 For example:
 
 previous statements:
-```
+```yang-pantheon
 leaf foo {
   type string;
 }
 ``` 
    current statements:
-``` 
+```yang-pantheon 
 leaf foo {
    type string;
    mandatory false;
@@ -24,7 +24,7 @@ leaf foo {
 ```     
 The difference will be "mandatory false" is added, although the previous leaf foo is 'mandatory false' by default.
 
-### compare tree
+## Compare tree
   compare the schema tree of the two yang release versions. It will identify which schema node paths are added,changed or deleted, and which schema node paths are changed to be deprecated or obsolete.
   These differences are effective differences. 
   All config  are missed will be treated to be default value, 
@@ -37,20 +37,20 @@ The difference will be "mandatory false" is added, although the previous leaf fo
   For example:
 
   previous statements:
-``` 
+```yang-pantheon 
   leaf foo {
     type string;
   }
 ``` 
   current statements:
-``` 
+```yang-pantheon 
   leaf foo {
     type string;
     mandatory true;
   }
 ``` 
   The difference will be changed from false to true , although the previous statements have no mandatory statement.
-### check compatibility
+## Check compatibility
   This function will output the compatibility results after comparing the two yang release versions. 
   It allows users to define their own compatible-check rules, if no user's rule is provide, it will use default rule.
   
@@ -84,6 +84,7 @@ The difference will be "mandatory false" is added, although the previous leaf fo
 * description: the description of this rule.
 
 ## Installation
+
 ### Prerequisites
 * JDK or JRE 1.8 or above
 
@@ -91,7 +92,7 @@ The difference will be "mandatory false" is added, although the previous leaf fo
 ``` 
 #git clone https://github.com/HuaweiDatacomm/yang-comparator.git
 ``` 
-### build code
+### Build code
 ``` 
 #cd yang-comparator
 #mvn clean install
@@ -102,7 +103,7 @@ copy yang-comparator-1.0-SNAPSHOT.jar and libs to anywhere in your computer.
 
 ## Usage:
 
-### standalone application
+### Standalone application
 ``` 
 #java -jar yang-comparator-1.0-SNAPSHOT.jar _arguments_
 ``` 
@@ -139,8 +140,8 @@ get compatibility with rule result:
 #java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility_rule.xml -compatible-check --rule rules.xml
 ``` 
 
-### plugin of YANG compiler
-1. copy src/resources/plugins.json to the directory where YANG compiler lives in. modify the plugins.json to 
+### Plugin of YANG compiler
+1. copy src/resources/plugins.json to YANG compiler application directory. modify the plugins.json to 
    indicate the class-path of YANG comparator (the class-path MUST point to the directory where yang-comparator-1.0-SNAPSHOT.jar lives in).
    
 2. set the build option (in build.json). The description of plugin parameters can be found in plugins.json.  e.g.
