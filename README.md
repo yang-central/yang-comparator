@@ -1,5 +1,6 @@
 # yang-comparator
 yang comparator is a tool which can compare two versions of yang releases. It can help users to identify the differences of the two versions.
+It can work as a standalone application or as a plugin of [YANG compiler](https://github.com/yang-central/yang-compiler).
 
 Yang comparator provides three main functions:compare statements, compare tree and check the compatibility between two versions.
 
@@ -100,6 +101,8 @@ it will generate yang-comparator-1.0-SNAPSHOT.jar and libs directory under the d
 copy yang-comparator-1.0-SNAPSHOT.jar and libs to anywhere in your computer.
 
 ## Usage:
+
+### standalone application
 ``` 
 #java -jar yang-comparator-1.0-SNAPSHOT.jar _arguments_
 ``` 
@@ -113,7 +116,7 @@ arguments:
 
 {-tree | -stmt | -compatible-check [--rule rule.xml ]}
 
-### Example:
+#### Example:
 download 8.20.10 and 8.21.0 versions yang files of network-router from https://github.com/Huawei/yang
  and copy to example/yang
 
@@ -136,7 +139,38 @@ get compatibility with rule result:
 #java -jar yang-comparator-1.0-SNAPSHOT.jar -left --y yang/8.20.10 -right --y yang/8.21.0 -o out/compatibility_rule.xml -compatible-check --rule rules.xml
 ``` 
 
-
+### plugin of YANG compiler
+1. copy src/resources/plugins.json to the directory where YANG compiler lives in. modify the plugins.json to 
+   indicate the class-path of YANG comparator (the class-path MUST point to the directory where yang-comparator-1.0-SNAPSHOT.jar lives in).
+   
+2. set the build option (in build.json). The description of plugin parameters can be found in plugins.json.  e.g.
+```json
+{
+  "build": {
+    "yang": "yang/new",
+    "plugin": [
+      {
+        "name": "yang_comparator",
+        "parameter": [
+          {
+            "name": "old-yang",
+            "value": "yang/old"
+          },
+          {
+            "name": "compare-type",
+            "value": "compatible-check"
+          },
+          {
+            "name": "result",
+            "value": "yang/result_tree.xml"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+3. run compiler,see [YANG compiler](https://github.com/yang-central/yang-compiler).
 
 
     

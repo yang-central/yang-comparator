@@ -1,0 +1,34 @@
+{
+  "plugins": {
+    "plugin": [
+      {
+        "name": "yang_comparator",
+        "class-path": "yang-comparator-1.0-SNAPSHOT.jar",
+        "class": "com.huawei.yang.comparator.YangComparatorPlugin",
+        "description": "a plugin for comparing two yang schema.",
+        "parameter": [
+          {
+            "name": "old-yang",
+            "description": "mandatory,the old version yang directory."
+          },
+          {
+            "name": "settings",
+            "description": "optional,the settings file path."
+          },
+          {
+            "name": "compare-type",
+            "description": "mandatory, specify compare-type, one of stmt,tree,or compatible-check"
+          },
+          {
+            "name": "rule",
+            "description": "optional, specify the path of compatible-rule file."
+          },
+          {
+            "name": "result",
+            "description": "mandatory, specify the compare result file path, the result file is a xml format."
+          }
+        ]
+      }
+    ]
+  }
+}
