@@ -10,13 +10,13 @@ These differences are all textual differences , not the effective differences.
 For example:
 
 previous statements:
-```yang-pantheon
+```yang
 leaf foo {
   type string;
 }
 ``` 
    current statements:
-```yang-pantheon 
+```yang 
 leaf foo {
    type string;
    mandatory false;
@@ -37,13 +37,13 @@ The difference will be "mandatory false" is added, although the previous leaf fo
   For example:
 
   previous statements:
-```yang-pantheon 
+```yang 
   leaf foo {
     type string;
   }
 ``` 
   current statements:
-```yang-pantheon 
+```yang 
   leaf foo {
     type string;
     mandatory true;
