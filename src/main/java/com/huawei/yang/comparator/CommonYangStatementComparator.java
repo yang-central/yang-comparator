@@ -139,11 +139,15 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         return compareResults;
     }
 
-    private static int calSimilarity(YangStatement src,YangStatement candidate){
+    public static int calSimilarity(YangStatement src,YangStatement candidate){
         if(!src.getYangKeyword().equals(candidate.getYangKeyword())){
             return 0;
         }
         int similarity = 1;
+        if(!src.getContext().getNamespace().equals(candidate.getContext().getNamespace())){
+            return similarity;
+        }
+        similarity++;
         if(!src.equals(candidate)){
             return similarity;
         }
@@ -175,7 +179,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
 
     }
 
-    private static boolean contains(List list,Object o){
+    public static boolean contains(List list,Object o){
         if(list == null ){
             return false;
         }
@@ -187,7 +191,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         return false;
     }
 
-    protected static YangStatement searchStatement(YangStatement statement,List<YangStatement> target,List<YangStatement> matched){
+    public static YangStatement searchStatement(YangStatement statement,List<YangStatement> target,List<YangStatement> matched){
         if(null == target || target.size() == 0){
             return null;
         }

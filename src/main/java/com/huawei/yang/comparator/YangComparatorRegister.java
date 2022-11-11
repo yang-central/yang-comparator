@@ -50,8 +50,8 @@ public class YangComparatorRegister {
         registerComparator(YangBuiltinKeyword.LIST.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.CHOICE.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.CASE.getKeyword(), new SchemaNodeComparator());
-        registerComparator(YangBuiltinKeyword.RPC.getKeyword(), new SchemaNodeComparator());
-        registerComparator(YangBuiltinKeyword.ACTION.getKeyword(), new SchemaNodeComparator());
+        registerComparator(YangBuiltinKeyword.RPC.getKeyword(), new OperationComparator());
+        registerComparator(YangBuiltinKeyword.ACTION.getKeyword(), new OperationComparator());
         registerComparator(YangBuiltinKeyword.INPUT.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.OUTPUT.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.NOTIFICATION.getKeyword(), new SchemaNodeComparator());

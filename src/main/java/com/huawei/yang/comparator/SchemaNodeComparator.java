@@ -13,9 +13,9 @@ import java.util.List;
  * @author f00360218
  * @since 2022-06-13
  */
-public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNode> {
+public class SchemaNodeComparator<T extends SchemaNode> extends CommonYangStatementComparator<T> {
     @Override
-    protected List<CompatibilityRule.ChangeInfo> getChangeInfo(SchemaNode left, SchemaNode right) {
+    protected List<CompatibilityRule.ChangeInfo> getChangeInfo(T left, T right) {
         List<CompatibilityRule.ChangeInfo> changeInfos = new ArrayList<>();
         if(left == null && right != null){
             if(right.isMandatory()){
@@ -35,7 +35,7 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
     }
 
     @Override
-    protected CompatibilityInfo defaultCompatibility(SchemaNode left, SchemaNode right,
+    protected CompatibilityInfo defaultCompatibility(T left, T right,
         CompatibilityRule.ChangeInfo changeInfo) {
         if(changeInfo == CompatibilityRule.ChangeInfo.MANDATORY_ADDED
         || changeInfo == CompatibilityRule.ChangeInfo.DELETED){
@@ -45,7 +45,7 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
     }
 
     @Override
-    protected List<YangCompareResult> compareChildren(SchemaNode left, SchemaNode right) {
+    protected List<YangCompareResult> compareChildren(T left, T right) {
         List<YangCompareResult> results = new ArrayList<>();
         results.addAll(super.compareChildren(left, right));
 
@@ -63,7 +63,7 @@ public class SchemaNodeComparator extends CommonYangStatementComparator<SchemaNo
     }
 
     @Override
-    public List<YangCompareResult> compare(SchemaNode left, SchemaNode right) {
+    public List<YangCompareResult> compare(T left, T right) {
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<CompatibilityRule.ChangeInfo> changeInfos = getChangeInfo(left,right);
         List<YangTreeCompareResult> treeCompareResults = new ArrayList<>();

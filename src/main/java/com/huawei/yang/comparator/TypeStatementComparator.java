@@ -23,6 +23,7 @@ public class TypeStatementComparator extends CommonYangStatementComparator<Type>
             return changeInfos;
         } else if (left != null && right == null){
             changeInfos.add(CompatibilityRule.ChangeInfo.DELETED);
+            return changeInfos;
         } else if(left == null &&  right == null){
             return changeInfos;
         }

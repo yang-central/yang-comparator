@@ -48,419 +48,43 @@ public class YangComparator {
         this.compatibilityRules = compatibilityRules;
     }
 
-    public List<YangCompareResult> compareSchemaNode(SchemaNode left,SchemaNode right){
-
-        List<YangCompareResult> compareResults = new ArrayList<>();
-        if(left instanceof TypedDataNode){
-            TypedDataNode leftDataNode = (TypedDataNode) left;
-            TypedDataNode rightDataNode = (TypedDataNode) right;
-            if(!leftDataNode.getType().getRestriction().equals(rightDataNode.getType().getRestriction())){
-                compareResults.addAll(compareStatement(leftDataNode.getType(),rightDataNode.getType(),true));
-            }
-            compareResults.addAll(compareStatement(leftDataNode.getUnits(),rightDataNode.getUnits()));
-            if(left instanceof Leaf){
-                Leaf leftLeaf = (Leaf) left;
-                Leaf rightLeaf = (Leaf) right;
-                compareResults.addAll(compareStatement(leftLeaf.getEffectiveDefault(),rightLeaf.getEffectiveDefault(),true));
-            } else if(left instanceof LeafList){
-                LeafList leftLeafList = (LeafList) left;
-                LeafList rightLeafList = (LeafList) right;
-                List<Default> leftDefaults = leftLeafList.getEffectiveDefaults();
-                List<Default> rightDefaults = rightLeafList.getEffectiveDefaults();
-                compareResults.addAll(compareStatement(leftDefaults,rightDefaults,true));
-            }
-
-        } else if(left instanceof Container){
-            Container leftContainer = (Container) left;
-            Container rightContainer = (Container) right;
-            compareResults.addAll(compareStatement(leftContainer.getPresence(),rightContainer.getPresence()));
-        } else if (left instanceof YangList){
-            YangList leftList = (YangList) left;
-            YangList rightList = (YangList) right;
-            compareResults.addAll(compareStatement(leftList.getKey(),rightList.getKey(),true));
-            List<Unique> leftUniques = leftList.getUniques();
-            List<Unique> rightUniques = rightList.getUniques();
-            compareResults.addAll(compareStatement(leftUniques,rightUniques,true));
-        } else if (left instanceof Choice){
-            Choice leftChoice = (Choice) left;
-            Choice rightChoice = (Choice) right;
-            compareResults.addAll(compareStatement(leftChoice.getDefault(),rightChoice.getDefault(),true));
-        }
-        if(left instanceof MustSupport){
-            List<Must> leftMusts = ((MustSupport)left).getMusts();
-            List<Must> rightMusts = ((MustSupport)right).getMusts();
-            List<YangCompareResult> mustResults = compareStatement(leftMusts,rightMusts,true);
-            if(mustResults.size() > 0){
-                compareStatement(leftMusts,rightMusts,true);
-                compareResults.addAll(mustResults);
-            }
-
-        }
-        if(left instanceof IfFeatureSupport){
-            List<IfFeature> LeftIfFeatures = ((IfFeatureSupport)left).getIfFeatures();
-            List<IfFeature> rightIfFeatures = ((IfFeatureSupport)right).getIfFeatures();
-            compareResults.addAll(compareStatement(LeftIfFeatures,rightIfFeatures,true));
-        }
-        if(left instanceof WhenSupport){
-            WhenSupport leftWhenSupport = (WhenSupport) left;
-            WhenSupport rightWhenSupport = (WhenSupport) right;
-            compareResults.addAll(compareStatement(leftWhenSupport.getWhen(),rightWhenSupport.getWhen(),true));
-        }
-        if(left instanceof MultiInstancesDataNode){
-            MultiInstancesDataNode leftDataNode = (MultiInstancesDataNode) left;
-            MultiInstancesDataNode rightDataNode = (MultiInstancesDataNode) right;
-            int leftMinElements = leftDataNode.getMinElements() == null?0:leftDataNode.getMinElements().getValue();
-            int rightMinElements = rightDataNode.getMinElements() == null?0:rightDataNode.getMinElements().getValue();
-            if(leftMinElements != rightMinElements){
-                YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                    new YangTreeMetaCompareResult(right,"min-elements", ChangeType.MODIFY,
-                        String.valueOf(leftMinElements),String.valueOf(rightMinElements));
-                compareResults.add(yangTreeMetaCompareResult);
-            }
-            int leftMaxElements = leftDataNode.getMaxElements()==null?Integer.MAX_VALUE
-                :leftDataNode.getMaxElements().isUnbounded()?Integer.MAX_VALUE:leftDataNode.getMaxElements().getValue();
-            int rightMaxElements = rightDataNode.getMaxElements()==null?Integer.MAX_VALUE
-                :rightDataNode.getMaxElements().isUnbounded()?Integer.MAX_VALUE:rightDataNode.getMaxElements().getValue();
-            if(leftMaxElements != rightMaxElements){
-                YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                    new YangTreeMetaCompareResult(right, "max-elements",ChangeType.MODIFY,
-                        (leftMaxElements ==Integer.MAX_VALUE)?"unbounded":String.valueOf(leftMaxElements),
-                        (rightMaxElements ==Integer.MAX_VALUE)?"unbounded":String.valueOf(rightMaxElements));
-                compareResults.add(yangTreeMetaCompareResult);
-            }
-            if(left.isConfig() && right.isConfig()){
-                OrderBy leftOrderedBy = OrderBy.SYSTEM;
-                if(leftDataNode.getOrderedBy() != null){
-                    leftOrderedBy = leftDataNode.getOrderedBy().getOrderedBy();
-                }
-                OrderBy rightOrderedBy = OrderBy.SYSTEM;
-                if(rightDataNode.getOrderedBy() != null){
-                    rightOrderedBy = rightDataNode.getOrderedBy().getOrderedBy();
-                }
-                if(leftOrderedBy != rightOrderedBy){
-                    YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                        new YangTreeMetaCompareResult(right, "ordered-by",ChangeType.MODIFY,
-                            leftOrderedBy.getOrderBy(),rightOrderedBy.getOrderBy());
-                    compareResults.add(yangTreeMetaCompareResult);
-                }
-
-            }
-
-        }
-        if(left instanceof MandatorySupport && left.isMandatory() != right.isMandatory()){
-            YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                new YangTreeMetaCompareResult(right, "mandatory",ChangeType.MODIFY,
-                    String.valueOf(left.isMandatory()),String.valueOf(right.isMandatory()));
-            compareResults.add(yangTreeMetaCompareResult);
-        }
-        if(left instanceof ConfigSupport && left.getSchemaTreeType() == SchemaTreeType.DATATREE
-        && left.isConfig() != right.isConfig()){
-            YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                new YangTreeMetaCompareResult(right, "config",ChangeType.MODIFY,
-                    String.valueOf(left.isConfig()),String.valueOf(right.isConfig()));
-            compareResults.add(yangTreeMetaCompareResult);
-        }
-        if(left.getEffectiveStatus() != right.getEffectiveStatus()){
-            YangTreeMetaCompareResult yangTreeMetaCompareResult =
-                new YangTreeMetaCompareResult(right, "status",ChangeType.MODIFY,
-                    left.getEffectiveStatus().getStatus(),right.getEffectiveStatus().getStatus());
-            compareResults.add(yangTreeMetaCompareResult);
-        }
-
-        List<YangCompareResult> unknownResults = compareStatement(left.getUnknowns(),right.getUnknowns(),true);
-        if(unknownResults.size() > 0){
-            compareResults.addAll(unknownResults);
-        }
-
-        return compareResults;
-    }
-
-
-    public List<YangCompareResult> compareChildrenTree(SchemaNode leftSchemaNode,SchemaNode rightSchemaNode){
-        List<YangCompareResult> compareResults = new ArrayList<>();
-        // if(!leftSchemaNode.equals(rightSchemaNode)){
-        //     YangTreeCompareResult compareResult = new YangTreeCompareResult(leftSchemaNode.getSchemaPath(),ChangeType.MODIFY);
-        //     compareResult.setLeft(leftSchemaNode);
-        //     compareResult.setRight(rightSchemaNode);
-        //     compareResults.add(compareResult);
-        // }
-
-        List<YangCompareResult> statementCompareResults = compareSchemaNode(leftSchemaNode,rightSchemaNode);
-        if(statementCompareResults.size() > 0){
-            YangTreeCompareResult compareResult = new YangTreeCompareResult(leftSchemaNode.getSchemaPath(),
-                ChangeType.MODIFY);
-            compareResult.setLeft(leftSchemaNode);
-            compareResult.setRight(rightSchemaNode);
-            compareResult.setMetaCompareResults(statementCompareResults);
-            compareResults.add(compareResult);
-        }
-        if((leftSchemaNode instanceof SchemaNodeContainer) && (rightSchemaNode instanceof SchemaNodeContainer)){
-            //children compare
-            compareResults.addAll(compareChildrenTree((SchemaNodeContainer) leftSchemaNode,(SchemaNodeContainer)rightSchemaNode));
-        }
-
-        return compareResults;
-    }
-
     public static List<SchemaNode> getModuleTreeNodes(MainModule module){
         List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
         effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(module));
         for(Augment augment: module.getAugments()){
-            effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(augment));
+            effectiveSchemaNodeChildren.add(augment);
         }
         return effectiveSchemaNodeChildren;
     }
     public static List<SchemaNode> getEffectiveSchemaNodeChildren (SchemaNodeContainer schemaNodeContainer){
         List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
         for(SchemaNode schemaNode:schemaNodeContainer.getSchemaNodeChildren()){
-            YangStatement parent = (YangStatement) schemaNodeContainer;
-            Namespace parentNs = parent.getContext().getNamespace();
-            Namespace childNs = schemaNode.getContext().getNamespace();
-            if(parentNs == null || childNs == null || !parentNs.getUri().equals(childNs.getUri())){
-                continue;
-            }
             if(schemaNode instanceof VirtualSchemaNode){
                 VirtualSchemaNode virtualSchemaNode = (VirtualSchemaNode) schemaNode;
                 effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(virtualSchemaNode));
+            } else {
+                if(schemaNodeContainer instanceof YangStatement){
+                    YangStatement parent = (YangStatement) schemaNodeContainer;
+                    Namespace parentNs = parent.getContext().getNamespace();
+                    Namespace childNs = schemaNode.getContext().getNamespace();
+                    if(parentNs != null && childNs != null && parentNs.getUri().equals(childNs.getUri())){
+                        effectiveSchemaNodeChildren.add(schemaNode);
+                    }
+                } else {
+                    effectiveSchemaNodeChildren.add(schemaNode);
+                }
             }
-            else {
-                effectiveSchemaNodeChildren.add(schemaNode);
-            }
+
+
         }
         return effectiveSchemaNodeChildren;
     }
 
-    public List<YangCompareResult> compareChildrenTree(SchemaNodeContainer leftContainer,SchemaNodeContainer rightContainer){
-        List<YangCompareResult> compareResults = new ArrayList<>();
-        List<SchemaNode> foundSchemaNodes = new ArrayList<>();
-        List<SchemaNode> leftSchemaNodes = getEffectiveSchemaNodeChildren(leftContainer);
-        for(SchemaNode leftSchemaNode:leftSchemaNodes){
-            if(!leftSchemaNode.isActive()){
-                continue;
-            }
-            SchemaNode rightSchemaNode = rightContainer.getSchemaNodeChild(leftSchemaNode.getIdentifier());
-            if(null == rightSchemaNode || !rightSchemaNode.getYangKeyword().equals(leftSchemaNode.getYangKeyword())){
-                //not found
-                YangTreeCompareResult compareResult = new YangTreeCompareResult(leftSchemaNode.getSchemaPath(),ChangeType.DELETE);
-                compareResult.setLeft(leftSchemaNode);
-            } else {
-                compareResults.addAll(compareChildrenTree(leftSchemaNode,rightSchemaNode));
-                foundSchemaNodes.add(rightSchemaNode);
-            }
-        }
-        List<SchemaNode> rightSchemaNodes = getEffectiveSchemaNodeChildren(rightContainer);
-        for(SchemaNode rightSchemaNode:rightSchemaNodes){
-            if(!rightSchemaNode.isActive()){
-                continue;
-            }
-            if(contains(foundSchemaNodes,rightSchemaNode)){
-                continue;
-            }
-            YangTreeCompareResult compareResult = new YangTreeCompareResult(rightSchemaNode.getSchemaPath(),ChangeType.ADD);
-            compareResult.setRight(rightSchemaNode);
-            compareResults.add(compareResult);
-        }
-        return compareResults;
-    }
-
-    public List<YangCompareResult> compareTree(){
-        List<YangCompareResult> compareResults = new ArrayList<>();
-        List<Module> foundModules = new ArrayList<>();
-        List<Module> modules = leftContext.getModules();
-        for(Module module:modules){
-            if(module instanceof SubModule){
-                continue;
-            }
-            List<Module> rightModules = rightContext.getModule(module.getArgStr());
-            if(rightModules == null || rightModules.size()==0){
-                //not find
-                List<SchemaNode> rootSchemaNodes = getEffectiveSchemaNodeChildren(module);
-                for(SchemaNode rootSchemaNode:rootSchemaNodes){
-                    YangTreeCompareResult compareResult = new YangTreeCompareResult(rootSchemaNode.getSchemaPath(),ChangeType.DELETE);
-                    compareResult.setLeft(rootSchemaNode);
-                    compareResults.add(compareResult);
-                }
-            } else {
-                Module rightModule = rightModules.get(0);
-                foundModules.add(rightModule);
-                compareResults.addAll(compareChildrenTree(module,rightModule));
-            }
-        }
-        for(Module rightModule:rightContext.getModules()){
-            if(rightModule instanceof SubModule){
-                continue;
-            }
-            if(contains(foundModules,rightModule)){
-                continue;
-            }
-            List<SchemaNode> rootSchemaNodes = getEffectiveSchemaNodeChildren(rightModule);
-            for(SchemaNode rootSchemaNode:rootSchemaNodes){
-                YangTreeCompareResult compareResult = new YangTreeCompareResult(rootSchemaNode.getSchemaPath(),ChangeType.ADD);
-                compareResult.setRight(rootSchemaNode);
-                compareResults.add(compareResult);
-            }
-        }
-        return compareResults;
-    }
-
-    private List<YangStatement> getSubStatements(YangStatement statement){
-        List<YangStatement> subStatements = new ArrayList<>();
-        for(YangElement subElement :statement.getSubElements()){
-            if(!(subElement instanceof YangStatement)){
-                continue;
-            }
-            subStatements.add((YangStatement) subElement);
-        }
-        return subStatements;
-    }
-    private int calSimilarity(YangStatement src,YangStatement candidate){
-        if(!src.getYangKeyword().equals(candidate.getYangKeyword())){
-            return 0;
-        }
-        int similarity = 1;
-        if(!src.equals(candidate)){
-            return similarity;
-        }
-        similarity++;
-        List<YangStatement> srcSubStatements = getSubStatements(src);
-        List<YangStatement> candidateSubStatements = getSubStatements(candidate);
-        if(srcSubStatements.size() != candidateSubStatements.size()){
-            return similarity;
-        }
-        similarity++;
-        List<YangStatement> matched = new ArrayList<>();
-        for(YangStatement srcSubStatement:srcSubStatements){
-            int maxSubSimilarity = 0;
-            YangStatement maxsimliaritySubStatement = null;
-            for(YangStatement candidateSubStatment:candidateSubStatements){
-                if(contains(matched,candidateSubStatment)){
-                    continue;
-                }
-                int subSimilarity = calSimilarity(srcSubStatement,candidateSubStatment);
-                if(subSimilarity > maxSubSimilarity){
-                    maxSubSimilarity = subSimilarity;
-                    maxsimliaritySubStatement = candidateSubStatment;
-                }
-            }
-            similarity+= maxSubSimilarity;
-            matched.add(maxsimliaritySubStatement);
-        }
-        return similarity;
-
-    }
-
-    private boolean contains(List list,Object o){
-        if(list == null ){
-            return false;
-        }
-        for(Object src:list){
-            if(src == o){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private YangStatement searchStatement(YangStatement statement,List<YangStatement> target,List<YangStatement> matched){
-        if(null == target || target.size() == 0){
-            return null;
-        }
-        List<YangStatement> matchedTargetStmts = new ArrayList<>();
-        for(YangStatement rightSubStatement:target){
-            if(contains(matched,rightSubStatement)){
-                continue;
-            }
-            if(CommonYangStatementComparator.yangStatementIsEqual(statement,rightSubStatement)){
-                matchedTargetStmts.add(rightSubStatement) ;
-                continue;
-            }
-        }
-        if(matchedTargetStmts.size() == 1){
-            return matchedTargetStmts.get(0);
-        } else if(matchedTargetStmts.size() >1){
-            int maxSimilarity = 0;
-            YangStatement maxSimilarStatement = null;
-            for(YangStatement matchedTargetStmt:matchedTargetStmts){
-                int similarity = calSimilarity(statement,matchedTargetStmt);
-                if(similarity > maxSimilarity){
-                    maxSimilarity = similarity;
-                    maxSimilarStatement = matchedTargetStmt;
-                }
-            }
-            return maxSimilarStatement;
-        }
-
-        YangStatementDef statementDef = statement.getContext().getYangSpecification()
-            .getStatementDef(statement.getParentStatement().getYangKeyword());
-        if(statementDef == null){
-            if(statement.getParentStatement() instanceof YangUnknown){
-                //unknown will be treated as cardinality with non-unbounded
-                for(YangStatement rightSubStatement:target){
-                    if(contains(matched,rightSubStatement)){
-                        continue;
-                    }
-                    return rightSubStatement;
-                }
-                return null;
-            }
-            else {
-                return null;
-            }
-        }
-
-        Cardinality cardinality = statementDef.getSubStatementCardinality(statement.getYangKeyword());
-        if(cardinality == null){
-            if(statement instanceof YangUnknown){
-                //unknown will be treated as cardinality with non-unbounded
-                for(YangStatement rightSubStatement:target){
-                    if(contains(matched,rightSubStatement)){
-                        continue;
-                    }
-                    return rightSubStatement;
-                }
-            }
-            return null;
-        }
-        if(cardinality.isUnbounded()){
-            return null;
-        }
-
-        for(YangStatement rightSubStatement:target){
-            if(contains(matched,rightSubStatement)){
-                continue;
-            }
-            return rightSubStatement;
-        }
-        return null;
-    }
-
-//    private boolean yangStatementIsEqual(YangStatement left,YangStatement right){
-//        if(left instanceof IdentifierRef && right instanceof IdentifierRef){
-//            if(!left.getYangKeyword().equals(right.getYangKeyword())){
-//                return false;
-//            }
-//            YangStatement leftRefStatement = ((IdentifierRef)left).getReferenceStatement();
-//            YangStatement rightRefStatement = ((IdentifierRef)right).getReferenceStatement();
-//            if(leftRefStatement != null && rightRefStatement != null && leftRefStatement.equals(rightRefStatement)){
-//                return true;
-//            } else if(leftRefStatement == null && rightRefStatement == null){
-//                if(left.getArgStr().equals(right.getArgStr())){
-//                    return true;
-//                }
-//                else {
-//                    return false;
-//                }
-//            } else {
-//                return false;
-//            }
-//        }
-//        return left.equals(right);
-//    }
     public List<YangCompareResult> compareStatement(YangStatement left,YangStatement right){
         return compareStatement(left,right,false);
     }
     public List<YangCompareResult> compareStatement(List<? extends YangElement> leftElements,
-        List<? extends YangElement> rightElements,boolean exceptSchemaNode){
+                                                    List<? extends YangElement> rightElements,boolean exceptSchemaNode){
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<YangStatement> foundStatements = new ArrayList<>();
 
@@ -491,7 +115,7 @@ public class YangComparator {
                     compareResults.add(yangStatementCompareResult);
                     continue;
                 }
-                YangStatement matchedRightSubStatement = searchStatement(leftSubStatement,rightSubStatements,foundStatements);
+                YangStatement matchedRightSubStatement = CommonYangStatementComparator.searchStatement(leftSubStatement,rightSubStatements,foundStatements);
                 if(null == matchedRightSubStatement){
                     YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.DELETE,leftSubStatement,null);
                     compareResults.add(yangStatementCompareResult);
@@ -512,11 +136,11 @@ public class YangComparator {
                     }
                 }
                 YangStatement rightSubElement = (YangStatement) subElement;
-                if(contains(foundStatements,rightSubElement)){
+                if(CommonYangStatementComparator.contains(foundStatements,rightSubElement)){
                     continue;
                 }
                 YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.ADD,
-                    null,rightSubElement);
+                        null,rightSubElement);
                 compareResults.add(yangStatementCompareResult);
             }
         }
@@ -540,7 +164,7 @@ public class YangComparator {
 
         if(!CommonYangStatementComparator.yangStatementIsEqual(left,right)){
             YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.MODIFY,
-                left,right);
+                    left,right);
             compareResults.add(yangStatementCompareResult);
         }
         compareResults.addAll(compareStatement(left.getSubElements(),right.getSubElements(),exceptSchemaNode));
@@ -556,7 +180,7 @@ public class YangComparator {
             if(rightModules == null || rightModules.size()==0){
                 //not find
                 YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.DELETE,
-                    module,null);
+                        module,null);
                 compareResults.add(yangStatementCompareResult);
             } else {
                 Module rightModule = rightModules.get(0);
@@ -568,7 +192,7 @@ public class YangComparator {
             if(rightModule instanceof SubModule){
                 continue;
             }
-            if(contains(foundModules,rightModule)){
+            if(CommonYangStatementComparator.contains(foundModules,rightModule)){
                 continue;
             }
             YangStatementCompareResult yangStatementCompareResult = new YangStatementCompareResult(ChangeType.ADD,null,rightModule);
@@ -732,7 +356,7 @@ public class YangComparator {
                             StatusStmt right = (StatusStmt) yangStatementCompareResult.getRight();
                             if(right.getStatus() == Status.OBSOLETE){
                                 obsoleted.add(
-                                    (Element) YangCompareResultSerializer.getXmlSerializer(result).serialize(false,false,false,false));
+                                        (Element) YangCompareResultSerializer.getXmlSerializer(result).serialize(false,false,false,false));
                             }
                         }
                     }
@@ -758,7 +382,7 @@ public class YangComparator {
                             StatusStmt right = (StatusStmt) yangStatementCompareResult.getRight();
                             if(right.getStatus() == Status.DEPRECATED){
                                 obsoleted.add(
-                                    (Element) YangCompareResultSerializer.getXmlSerializer(result).serialize(false,false,false,false));
+                                        (Element) YangCompareResultSerializer.getXmlSerializer(result).serialize(false,false,false,false));
                             }
                         }
                     }
@@ -845,41 +469,41 @@ public class YangComparator {
             } else if (arg.equalsIgnoreCase("-o")) {
                 outBegin = i;
             } else if(arg.equalsIgnoreCase("-tree")
-                || arg.equalsIgnoreCase("-stmt")
-                || arg.equalsIgnoreCase("-compatible-check")){
+                    || arg.equalsIgnoreCase("-stmt")
+                    || arg.equalsIgnoreCase("-compatible-check")){
                 typeBegin = i;
             }
         }
         if(leftBeginPos != 0){
             System.out.println("no left argument or left argument is not the 1st argument.");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                             + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                             + "        -o {output.xml}\n"
-                             + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         if(rightBeginPos == -1){
             System.out.println("no right argument.");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "        -o {output.xml}\n"
-                + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         if(outBegin == -1){
             System.out.println("no output argument.");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "        -o {output.xml}\n"
-                + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         if(typeBegin == -1){
             System.out.println("no compare type argument, it should be '-tree' or '-stmt' or '-compatible-check' ");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "        -o {output.xml}\n"
-                + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         String leftYangDir = null;
@@ -898,9 +522,9 @@ public class YangComparator {
         if(leftYangDir == null){
             System.out.println("left yang file should be specified using --y argument.");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "        -o {output.xml}\n"
-                + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         String rightYangDir = null;
@@ -919,9 +543,9 @@ public class YangComparator {
         if(rightYangDir == null){
             System.out.println("right yang file should be specified using --y argument.");
             System.out.println("usage: -left --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
-                + "        -o {output.xml}\n"
-                + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
+                    + "       -right --y {yang file or dir]} [--dep {dependency file or dir}] [--cap {capabilities.xml}]\n"
+                    + "        -o {output.xml}\n"
+                    + "        {-tree | -stmt [--filter filter.xml] | -compatible-check [--rule rule.xml] [--filter filter.xml]}");
             return;
         }
         String output = args[outBegin + 1];
@@ -936,7 +560,7 @@ public class YangComparator {
         String rule = null;
         String filter = null;
         if(compareTypeStr.equalsIgnoreCase("-compatible-check")
-          || compareTypeStr.equalsIgnoreCase("-tree")){
+                || compareTypeStr.equalsIgnoreCase("-tree")){
             for(int i = typeBegin;i < args.length;i++){
                 String arg = args[i];
                 if(arg.equalsIgnoreCase("--rule")){
