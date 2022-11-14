@@ -28,7 +28,7 @@ public class OperationComparator extends SchemaNodeComparator<Operation>{
     protected List<YangCompareResult> compareChildren(Operation left, Operation right) {
         List<YangCompareResult> compareResults = new ArrayList<>();
         compareResults.addAll(compareStatements(left==null?new ArrayList<>():left.getEffectiveSubStatements(),
-                right==null?new ArrayList<>():right.getEffectiveSubStatements(),true));
+                right==null?new ArrayList<>():right.getEffectiveSubStatements(),OPTION_ONLY_META));
 
 
         List<YangStatement> leftSchemaChildren = new ArrayList<>();
@@ -59,7 +59,7 @@ public class OperationComparator extends SchemaNodeComparator<Operation>{
                 rightSchemaChildren.add(right.getOutput());
             }
         }
-        compareResults.addAll(compareStatements(leftSchemaChildren,rightSchemaChildren,false));
+        compareResults.addAll(compareStatements(leftSchemaChildren,rightSchemaChildren,OPTION_ALL));
         return compareResults;
     }
 }

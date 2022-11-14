@@ -37,14 +37,14 @@ public class ModuleComparator extends CommonYangStatementComparator<Module> {
             temp = right;
         }
         results.addAll(compareStatements(left==null?new ArrayList<>():left.getEffectiveMetaStatements(),
-            right==null?new ArrayList<>():right.getEffectiveMetaStatements(),false));
+            right==null?new ArrayList<>():right.getEffectiveMetaStatements(),OPTION_ALL));
         results.addAll(compareStatements(left==null?new ArrayList<>():left.getEffectiveLinkageStatement(),
-            right==null?new ArrayList<>():right.getEffectiveLinkageStatement(),false));
+            right==null?new ArrayList<>():right.getEffectiveLinkageStatement(),OPTION_ALL));
         if(temp instanceof MainModule){
             results.addAll(compareStatements(left==null?new ArrayList<>():left.getEffectiveDefinitionStatement(),
-                right==null?new ArrayList<>():right.getEffectiveDefinitionStatement(),true));
+                right==null?new ArrayList<>():right.getEffectiveDefinitionStatement(),OPTION_ONLY_META));
             results.addAll(compareStatements(left==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(left),
-                right==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(right),false));
+                right==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(right),OPTION_ONLY_SCHEMA));
         }
         return results;
     }

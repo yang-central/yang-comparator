@@ -15,7 +15,9 @@ import java.util.List;
  * @since 2022-06-10
  */
 public class CommonYangStatementComparator<T extends YangStatement> extends AbstractYangStatementComparator<T>{
-
+    public static final int OPTION_ONLY_META = 1;
+    public static final int OPTION_ONLY_SCHEMA = 2;
+    public static final int OPTION_ALL = 3;
     @Override
     protected List<CompatibilityRule.ChangeInfo> getChangeInfo(T left, T right) {
         List<CompatibilityRule.ChangeInfo> changeInfos = new ArrayList<>();
@@ -93,7 +95,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
     }
     protected List<YangCompareResult> compareChildren(T left, T right){
         List<YangCompareResult> compareResults = compareStatements(left==null?new ArrayList<>():left.getEffectiveSubStatements(),
-            right==null?new ArrayList<>():right.getEffectiveSubStatements(),true);
+            right==null?new ArrayList<>():right.getEffectiveSubStatements(), OPTION_ONLY_META);
         return compareResults;
     }
 
@@ -144,10 +146,7 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
             return 0;
         }
         int similarity = 1;
-        if(!src.getContext().getNamespace().equals(candidate.getContext().getNamespace())){
-            return similarity;
-        }
-        similarity++;
+
         if(!src.equals(candidate)){
             return similarity;
         }
@@ -212,12 +211,17 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
             YangStatement maxSimilarStatement = null;
             for(YangStatement matchedTargetStmt:matchedTargetStmts){
                 int similarity = calSimilarity(statement,matchedTargetStmt);
+                if(similarity <=1){
+                    continue;
+                }
                 if(similarity > maxSimilarity){
                     maxSimilarity = similarity;
                     maxSimilarStatement = matchedTargetStmt;
                 }
             }
-            return maxSimilarStatement;
+            if(maxSimilarStatement != null){
+                return maxSimilarStatement;
+            }
         }
 
         if(statement.getParentStatement() == null){
@@ -269,6 +273,17 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
     }
 
     public static boolean yangStatementIsEqual(YangStatement left,YangStatement right){
+        if((left instanceof SchemaNode) && (right instanceof SchemaNode)){
+            SchemaNode leftSchemaNode = (SchemaNode) left;
+            SchemaNode rightSchemaNode = (SchemaNode) right;
+            if(!left.getContext().getNamespace().equals(right.getContext().getNamespace())){
+                return false;
+            }
+            if(!yangStatementIsEqual((YangStatement) leftSchemaNode.getClosestAncestorNode(),
+                    (YangStatement) rightSchemaNode.getClosestAncestorNode())){
+                return false;
+            }
+        }
         if((left instanceof IdentifierRef) && (right instanceof IdentifierRef)){
             if(!left.getYangKeyword().equals(right.getYangKeyword())){
                 return false;
@@ -292,16 +307,21 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
     }
 
     public static List<YangCompareResult> compareStatements(List<? extends YangStatement> leftElements,
-        List<? extends YangStatement> rightElements,boolean onlyMeta){
+        List<? extends YangStatement> rightElements,int option){
         List<YangCompareResult> compareResults = new ArrayList<>();
         List<YangStatement> foundStatements = new ArrayList<>();
 
         if(leftElements.size() > 0){
             for(YangStatement subElement:leftElements){
                 YangStatement leftSubStatement = subElement;
-                if(onlyMeta){
+                if(option == OPTION_ONLY_META){
                     if((leftSubStatement instanceof SchemaNode)
-                    ||(leftSubStatement instanceof Referencable)){
+                            ||(leftSubStatement instanceof Referencable)){
+                        continue;
+                    }
+                } else if (option == OPTION_ONLY_SCHEMA){
+                    if(!((leftSubStatement instanceof SchemaNode)
+                    )){
                         continue;
                     }
                 }
@@ -340,9 +360,14 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
         }
         if(rightElements.size() > 0){
             for(YangStatement subElement:rightElements){
-                if(onlyMeta){
+                if(option == OPTION_ONLY_META){
                     if((subElement instanceof SchemaNode)
                             ||(subElement instanceof Referencable)){
+                        continue;
+                    }
+                } else if (option == OPTION_ONLY_SCHEMA){
+                    if(!((subElement instanceof SchemaNode)
+                    )){
                         continue;
                     }
                 }

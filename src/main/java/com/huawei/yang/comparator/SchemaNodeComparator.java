@@ -57,7 +57,7 @@ public class SchemaNodeComparator<T extends SchemaNode> extends CommonYangStatem
             SchemaNodeContainer leftContainer = (SchemaNodeContainer) left;
             SchemaNodeContainer rightContainer = (SchemaNodeContainer) right;
             results.addAll(compareStatements(leftContainer==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(leftContainer),
-                rightContainer==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(rightContainer),false));
+                rightContainer==null?new ArrayList<>():YangComparator.getEffectiveSchemaNodeChildren(rightContainer),OPTION_ONLY_SCHEMA));
         }
         return results;
     }
@@ -65,6 +65,9 @@ public class SchemaNodeComparator<T extends SchemaNode> extends CommonYangStatem
     @Override
     public List<YangCompareResult> compare(T left, T right) {
         List<YangCompareResult> compareResults = new ArrayList<>();
+        if(left == null && right == null){
+            return compareResults;
+        }
         List<CompatibilityRule.ChangeInfo> changeInfos = getChangeInfo(left,right);
         List<YangTreeCompareResult> treeCompareResults = new ArrayList<>();
         SchemaNode temp = right;

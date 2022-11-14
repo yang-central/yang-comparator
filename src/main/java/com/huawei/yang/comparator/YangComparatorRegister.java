@@ -59,6 +59,7 @@ public class YangComparatorRegister {
         registerComparator(YangBuiltinKeyword.LEAF.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.ANYDATA.getKeyword(), new SchemaNodeComparator());
         registerComparator(YangBuiltinKeyword.ANYXML.getKeyword(), new SchemaNodeComparator());
+        registerComparator(YangBuiltinKeyword.AUGMENT.getKeyword(), new AugmentComparator());
         //type
         registerComparator(YangBuiltinKeyword.TYPE.getKeyword(), new TypeStatementComparator());
         //value

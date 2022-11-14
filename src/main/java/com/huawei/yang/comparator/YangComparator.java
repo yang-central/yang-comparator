@@ -52,7 +52,7 @@ public class YangComparator {
         List<SchemaNode> effectiveSchemaNodeChildren = new ArrayList<>();
         effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(module));
         for(Augment augment: module.getAugments()){
-            effectiveSchemaNodeChildren.add(augment);
+            effectiveSchemaNodeChildren.addAll(getEffectiveSchemaNodeChildren(augment));
         }
         return effectiveSchemaNodeChildren;
     }
@@ -419,25 +419,41 @@ public class YangComparator {
             compareResults = compareStatement();
 
         } else if (compareType == CompareType.TREE){
-            List<SchemaNode> leftSchemaNodeChildren = new ArrayList<>();
-            for(Module module:leftContext.getModules()){
-                if(module instanceof MainModule){
-                    leftSchemaNodeChildren.addAll(getModuleTreeNodes((MainModule) module));
+            List<Module> matched = new ArrayList<>();
+            for(Module leftModule:leftContext.getModules()){
+                if(!(leftModule instanceof MainModule)){
+                    continue;
                 }
-            }
-            List<SchemaNode> rightSchemaNodeChildren = new ArrayList<>();
-            for(Module module:rightContext.getModules()){
-                if(module instanceof MainModule){
-                    rightSchemaNodeChildren.addAll(getModuleTreeNodes((MainModule) module));
+                List<SchemaNode> leftSchemaNodes = getModuleTreeNodes((MainModule) leftModule);
+                Module matchedModule = null;
+                for(Module rightModule:rightContext.getModules()){
+                    if(rightModule.getArgStr().equals(leftModule.getArgStr())){
+                        matched.add(rightModule);
+                        matchedModule = rightModule;
+                        break;
+                    }
                 }
+                List<SchemaNode> rightSchemaNodes = new ArrayList<>();
+                if(null != matchedModule){
+                    rightSchemaNodes.addAll(getModuleTreeNodes((MainModule) matchedModule));
+                }
+                compareResults.addAll(CommonYangStatementComparator.compareStatements(leftSchemaNodes,rightSchemaNodes
+                        ,CommonYangStatementComparator.OPTION_ONLY_SCHEMA));
             }
-            compareResults = CommonYangStatementComparator.compareStatements(
-                    leftSchemaNodeChildren,
-                    rightSchemaNodeChildren,false
-            );
+            for(Module rightModule:rightContext.getModules()){
+                if(matched.contains(rightModule)){
+                    continue;
+                }
+                if(!(rightModule instanceof MainModule)){
+                    continue;
+                }
+                compareResults.addAll(CommonYangStatementComparator.compareStatements(new ArrayList<>(),getModuleTreeNodes(
+                                (MainModule) rightModule)
+                        ,CommonYangStatementComparator.OPTION_ONLY_SCHEMA));
+            }
         } else if(compareType == CompareType.COMPATIBLE_CHECK){
             compareResults = CommonYangStatementComparator.compareStatements(
-                    leftContext.getModules(),rightContext.getModules(),false
+                    leftContext.getModules(),rightContext.getModules(),CommonYangStatementComparator.OPTION_ALL
             );
         }
         return compareResults;
