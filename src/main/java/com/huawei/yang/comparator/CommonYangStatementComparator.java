@@ -87,6 +87,9 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
             statement = stmt.getYangKeyword().getLocalName();
         } else {
             YangUnknown unknown = (YangUnknown) stmt;
+            if(unknown.getExtension() == null){
+                return unknown.getKeyword();
+            }
             String moduleName = unknown.getExtension().getContext().getCurModule().getMainModule().getArgStr();
             String extensionName = unknown.getExtension().getArgStr();
             statement = moduleName + ":" + extensionName;

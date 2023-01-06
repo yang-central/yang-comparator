@@ -28,6 +28,9 @@ public class YangComparatorRegister {
     }
 
     public YangStatementComparator getComparator(String yangKeyword){
+        if(yangKeyword == null){
+            return new CommonYangStatementComparator();
+        }
         YangStatementComparator comparator = policyMap.get(yangKeyword);
         if (comparator == null) {
             return new CommonYangStatementComparator();
