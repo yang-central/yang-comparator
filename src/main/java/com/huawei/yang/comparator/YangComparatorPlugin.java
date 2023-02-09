@@ -63,9 +63,7 @@ public class YangComparatorPlugin implements YangCompilerPlugin {
     }
 
     @Override
-    public void run(YangSchemaContext yangSchemaContext, Settings settings,List<YangCompilerPluginParameter> list) throws YangCompilerException {
-        YangCompiler yangCompiler = new YangCompiler();
-        yangCompiler.setSettings((settings==null)?new Settings():settings);
+    public void run(YangSchemaContext yangSchemaContext, YangCompiler yangCompiler,List<YangCompilerPluginParameter> list) throws YangCompilerException {
         CompareType compareType = null;
         String oldYangPath = null;
         String rulePath = null;
