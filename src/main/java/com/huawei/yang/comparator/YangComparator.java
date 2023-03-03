@@ -567,7 +567,7 @@ public class YangComparator {
         String output = args[outBegin + 1];
         File outputFile = new File(output);
         if(!outputFile.exists()){
-            if(!outputFile.getParentFile().exists()){
+            if(outputFile.getParentFile() != null && !outputFile.getParentFile().exists()){
                 outputFile.getParentFile().mkdirs();
             }
             outputFile.createNewFile();
