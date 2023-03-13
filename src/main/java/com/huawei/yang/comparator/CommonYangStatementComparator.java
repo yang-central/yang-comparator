@@ -336,12 +336,9 @@ public class CommonYangStatementComparator<T extends YangStatement> extends Abst
                 }
 
                 List<YangStatement> rightSubStatements = new ArrayList<>();
-                for(YangElement rightElement:rightElements){
-                    if(!(rightElement instanceof YangStatement)){
-                        continue;
-                    }
-                    if(leftSubStatement.getYangKeyword().equals(((YangStatement) rightElement).getYangKeyword())){
-                        rightSubStatements.add((YangStatement) rightElement);
+                for(YangStatement rightElement:rightElements){
+                    if(leftSubStatement.getYangKeyword().equals(rightElement.getYangKeyword())){
+                        rightSubStatements.add(rightElement);
                     }
                 }
                 if(rightSubStatements.size()==0){
