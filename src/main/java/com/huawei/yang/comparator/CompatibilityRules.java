@@ -33,7 +33,7 @@ public class CompatibilityRules {
 
     public CompatibilityRule getCompatibilityRule(String ruleId){
         for(CompatibilityRule rule:compatibilityRules){
-            if(rule.getRuleId().equals(rule)){
+            if(rule.getRuleId().equals(ruleId)){
                 return rule;
             }
         }
