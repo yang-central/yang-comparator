@@ -5,6 +5,7 @@ import com.huawei.yang.comparator.YangComparator;
 import com.huawei.yang.comparator.YangCompareResult;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.yangcentral.yangkit.common.api.validate.ValidatorResult;
 import org.yangcentral.yangkit.compiler.Settings;
 import org.yangcentral.yangkit.compiler.YangCompiler;
 import org.yangcentral.yangkit.compiler.YangCompilerException;
@@ -102,7 +103,11 @@ public class YangComparatorPlugin implements YangCompilerPlugin {
             throw new YangCompilerException("missing mandatory parameter:result");
         }
         YangSchemaContext oldSchemaContext = yangCompiler.buildSchemaContext();
-        oldSchemaContext.validate();
+        ValidatorResult oldResult = oldSchemaContext.validate();
+        if(!oldResult.isOk()){
+            throw new YangCompilerException("fail to validate the schema context of " + oldYangPath +
+                    ".\n" + oldResult);
+        }
         //System.out.println(oldSchemaContext.getValidateResult());
         YangComparator yangComparator = new YangComparator(oldSchemaContext,yangSchemaContext);
         try {

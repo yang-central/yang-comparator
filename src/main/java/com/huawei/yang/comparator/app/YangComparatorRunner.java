@@ -143,10 +143,17 @@ public class YangComparatorRunner {
         }
         YangSchemaContext leftSchemaContext = YangYinParser.parse(leftYangDir,leftDepDir,leftCap);
         ValidatorResult leftValidatorResult = leftSchemaContext.validate();
-        //System.out.println(leftValidatorResult);
+        if( !leftValidatorResult.isOk()){
+            System.out.println("The yang files in directory:"+ leftYangDir + " have something wrong.");
+            System.out.println(leftValidatorResult);
+        }
 
         YangSchemaContext rightSchemaContext = YangYinParser.parse(rightYangDir,rightDepDir,rightCap);
-        rightSchemaContext.validate();
+        ValidatorResult rightValidatorResult = rightSchemaContext.validate();
+        if( !rightValidatorResult.isOk()){
+            System.out.println("The yang files in directory:"+ rightYangDir + " have something wrong.");
+            System.out.println(rightValidatorResult);
+        }
 
         YangComparator comparator = new YangComparator(leftSchemaContext,rightSchemaContext);
         CompareType compareType = null;
