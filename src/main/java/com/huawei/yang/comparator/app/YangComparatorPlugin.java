@@ -1,5 +1,8 @@
-package com.huawei.yang.comparator;
+package com.huawei.yang.comparator.app;
 
+import com.huawei.yang.comparator.CompareType;
+import com.huawei.yang.comparator.YangComparator;
+import com.huawei.yang.comparator.YangCompareResult;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.yangcentral.yangkit.compiler.Settings;
